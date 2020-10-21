@@ -1,0 +1,51 @@
+html {
+    font-size: 12pt;
+    font-family: Arial;
+    width: 65em;
+    margin: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-image: url("pixel_weave.png");
+    background-repeat: repeat;
+}
+
+
+/*  I don't understand the margin interactions.
+ *  If you dont include the body margin below,
+ *  there is a gap between "html" and wrapper divs.
+ */
+body {
+    margin: auto;
+}
+
+#wrapper {
+    background-color: white;
+    border-left: gray solid;
+    border-right: gray solid;
+    border: gray solid;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 35px;
+    padding-bottom: 35px;
+}
+.figure-header {
+    margin-bottom: 20px;
+}
+
+.figure {
+    padding-left: 30px;
+}
+
+.dropdown {
+    width: 400px;
+}
+
+h4 {
+    font-size: 14pt;
+    font-family: Arial;
+}
+
+
+li{
+    margin: 10px 0;
+}
