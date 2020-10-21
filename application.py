@@ -576,10 +576,18 @@ def update_figure3(role, isbar, season):
     )
     # add "post-patch" label to last week
     # this will need to be fixed in SL main release!
-    stack_figure.add_annotation(
-        dict(x=38.5, y=0, xanchor="left", yanchor="top", text="39: post-patch"),
-        showarrow=False,
-    )
+    if season == "bfa4" or season == "bfa4_postpatch":  # same if statements! fix
+        stack_figure.add_annotation(
+            dict(
+                x=39,
+                y=1,
+                yref="paper",
+                xanchor="center",
+                yanchor="top",
+                text="Post-patch begins (week 39)",
+                showarrow=True,
+            )
+        )
     return stack_figure
 
 
