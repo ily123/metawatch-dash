@@ -381,7 +381,7 @@ app.layout = html.Div(
             html.H1(children="Benched :: Mythic+ at a glance"),
             figure_list,
             html.P(
-                "Data updated: %s US CST" % DATA_LAST_UPDATED,
+                "Data updated: %s" % DATA_LAST_UPDATED,
                 style={"text-align": "right"},
             ),
             html.Div(
