@@ -119,7 +119,7 @@ stacked_week_fig = generate_stack_figure(
 
 DATA_LAST_UPDATED = datetime.datetime.fromtimestamp(
     int(os.path.getmtime(db_file_path))
-).strftime("%Y-%m-%d %H:%M:%S")
+).strftime("%Y-%m-%d")
 
 figure_list = html.Ul(
     children=[
