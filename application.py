@@ -30,7 +30,6 @@ def get_data_from_sqlite(db_file_path, season):
         fill_value=0,
     )
 
-    # oops, forgot to sum by dungeon before piping to SQLite, do it now:
     week_summary = pd.pivot_table(
         week_summary, values="run_count", index="spec", columns="period", fill_value=0
     )
