@@ -116,8 +116,9 @@ stacked_week_fig = generate_stack_figure(
     week_summary, "week", "mdps", "bar", PATCH_NAMES[CURRENT_SEASON]
 )
 
-data_last_updated = int(os.path.getmtime(db_file_path))
-UPDATED_MINUTES_AGO = round((int(time.time()) - data_last_updated) / 60.0)
+data_last_updated = datetime.datetime.fromtimestamp(
+    int(os.path.getmtime(db_file_path))
+).strftime("%Y-%m-%d")
 
 figure_list = html.Ul(
     children=[
@@ -379,7 +380,7 @@ app.layout = html.Div(
             html.H1(children="Benched :: Mythic+ at a glance"),
             figure_list,
             html.P(
-                "Data updated: %s mins ago" % UPDATED_MINUTES_AGO,
+                "Data updated: %s" % data_last_updated,
                 style={"text-align": "right"},
             ),
             html.Div(
