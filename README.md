@@ -11,20 +11,25 @@ For backend see [this repo](https://github.com/ily123/metawatch), and deployed
 application [here](https://bit.ly/35ZdAvD)
 
 # Installation and Usage
-* Clone repo locally
+* The code was tested on Python 3.6.9 and 3.7.9, but should run on any major version 3.6 and up
+
+* To run dashboard locally, clone repo
     ```
     git clone https://github.com/ily123/metawatch-dash
     ```
 * Create & activate virtual env using your favorite tool
+
 * Install dependensices inside the env
     ```
     pip install -r requirements.txt
     ```
 * Rename ```data/example_summary.sqlite``` to ```data/summary.sqlite```
+
 * Launch the app
     ```
     python application.py
     ```
+
 * To see in browser go to:
     ```
     localhost:8080
