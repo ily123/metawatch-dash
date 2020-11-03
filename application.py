@@ -3,14 +3,14 @@ import os
 import sqlite3
 import time
 
+import pandas as pd
+
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-import pandas as pd
+import figure
 import plotly.express as px
 from dash.dependencies import Input, Output
-
-import figure
 
 
 def get_data_from_sqlite(db_file_path, season):
@@ -116,9 +116,8 @@ stacked_week_fig = generate_stack_figure(
     week_summary, "week", "mdps", "bar", PATCH_NAMES[CURRENT_SEASON]
 )
 
-DATA_LAST_UPDATED = datetime.datetime.fromtimestamp(
-    int(os.path.getmtime(db_file_path))
-).strftime("%Y-%m-%d")
+data_last_updated = int(os.path.getmtime(db_file_path))
+UPDATED_MINUTES_AGO = round((int(time.time()) - data_last_updated) / 60)
 
 figure_list = html.Ul(
     children=[
@@ -380,7 +379,7 @@ app.layout = html.Div(
             html.H1(children="Benched :: Mythic+ at a glance"),
             figure_list,
             html.P(
-                "Data updated: %s" % DATA_LAST_UPDATED,
+                "Data updated: %s mins ago" % UPDATED_MINUTES_AGO,
                 style={"text-align": "right"},
             ),
             html.Div(
