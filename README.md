@@ -18,11 +18,19 @@ application [here](https://bit.ly/35ZdAvD)
     git clone https://github.com/ily123/metawatch-dash
     ```
 * Create & activate virtual env using your favorite tool
+    ```
+    python3 -m venv myenv
+    source myenv/bin/activate
+    ```
 * Install dependensices inside the env
     ```
+    cd metawatch-dash/
     pip install -r requirements.txt
     ```
-* Rename ```data/example_summary.sqlite``` to ```data/summary.sqlite```
+* Rename ```data/example_summary.sqlite``` to ```data/summary.sqlite```:
+    ```
+    mv data/example_summary.sqlite data/summary.sqlite
+    ```
 * Launch the app
     ```
     python application.py
@@ -30,5 +38,11 @@ application [here](https://bit.ly/35ZdAvD)
 * To see in browser go to:
     ```
     localhost:8080
+    ```
+* To quit:
+    ```
+    # press Ctrl + C to stop the app server
+    # to exit virtual env
+    deactivate
     ```
 
