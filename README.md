@@ -18,18 +18,15 @@ application [here](https://bit.ly/35ZdAvD)
     git clone https://github.com/ily123/metawatch-dash
     ```
 * Create & activate virtual env using your favorite tool
-
 * Install dependensices inside the env
     ```
     pip install -r requirements.txt
     ```
 * Rename ```data/example_summary.sqlite``` to ```data/summary.sqlite```
-
 * Launch the app
     ```
     python application.py
     ```
-
 * To see in browser go to:
     ```
     localhost:8080
