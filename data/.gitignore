@@ -1,0 +1,5 @@
+# Ignore everything in this directory
+*
+# Except the SQLite example db
+!.gitignore
+!example_summary.sqlite
