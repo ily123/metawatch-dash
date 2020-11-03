@@ -318,13 +318,6 @@ errata_and_faq = dcc.Markdown(  # &nbsp; is a hacky way to add a blank line to M
     """
     #### FAQ:
 
-    **In your top figure why are you using completed key,
-    instead of timed key, for BEST KEY?**
-
-    It's not intended. I will add a timed/completed toggle in the future releases.
-
-    &nbsp;
-
     **How frequently are the data updated?**
 
     The data are updated daily.
@@ -351,7 +344,7 @@ errata_and_faq = dcc.Markdown(  # &nbsp; is a hacky way to add a blank line to M
     &nbsp;
 
     -----
-    This website does not use cookies or sell your data to Google.
+    This website does not use cookies or sell your data.
     """
 )
 
