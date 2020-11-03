@@ -117,7 +117,7 @@ stacked_week_fig = generate_stack_figure(
 )
 
 data_last_updated = int(os.path.getmtime(db_file_path))
-UPDATED_MINUTES_AGO = round((int(time.time()) - data_last_updated) / 60)
+UPDATED_MINUTES_AGO = round((int(time.time()) - data_last_updated) / 60.0)
 
 figure_list = html.Ul(
     children=[
