@@ -3,14 +3,14 @@ import os
 import sqlite3
 import time
 
-import pandas as pd
-
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-import figure
+import pandas as pd
 import plotly.express as px
 from dash.dependencies import Input, Output
+
+import figure
 
 
 def get_data_from_sqlite(db_file_path, season):
@@ -320,7 +320,7 @@ errata_and_faq = dcc.Markdown(  # &nbsp; is a hacky way to add a blank line to M
 
     **How frequently are the data updated?**
 
-    The data are updated daily.
+    The data are updated every hour.
 
     &nbsp;
 
