@@ -743,7 +743,7 @@ class StackedChart:
                 self.patch,
             )
         elif self.xaxis_type == "week":
-            fig_title = "<b>SHARE OF %s SPECS IN WEEKLY TOP 6000 RUNS (%s)</b>" % (
+            fig_title = "<b>SHARE OF %s SPECS IN WEEKLY TOP 500 RUNS (%s)</b>" % (
                 self.spec_role,
                 self.patch,
             )

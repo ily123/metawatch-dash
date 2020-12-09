@@ -549,31 +549,47 @@ def update_figure2(role, isbar, season):
 )
 def update_figure3(role, isbar, season):
     """Switch between sorted by key and sorted by population view."""
-    if season == "bfa4" or season == "bfa4_postpatch":
-        patch_name = "BFA S4 & Post-patch"
-    else:
-        patch_name = PATCH_NAMES[season]
     stack_figure = generate_stack_figure(
         data=week_summary,
         chart_type="week",
         role=role,
         stack_type=isbar,
-        patch=patch_name,
+        patch= "since BFA S4",
     )
-    # add "post-patch" label to last week
-    # this will need to be fixed in SL main release!
-    if season == "bfa4" or season == "bfa4_postpatch":  # same if statements! fix
-        stack_figure.add_annotation(
-            dict(
-                x=39,
-                y=1,
-                yref="paper",
-                xanchor="center",
-                yanchor="top",
-                text="Post-patch begins (week 39)",
-                showarrow=True,
-            )
+    # add timeline labels
+    stack_figure.add_annotation(
+        dict(
+            x=1,
+            y=1,
+            yref="paper",
+            xanchor="left",
+            yanchor="top",
+            text="BFA S4 begins",
+            showarrow=True,
         )
+    )
+    stack_figure.add_annotation(
+        dict(
+            x=39,
+            y=1,
+            yref="paper",
+            xanchor="center",
+            yanchor="top",
+            text="BFA Post-patch begins",
+            showarrow=True,
+        )
+    )
+    stack_figure.add_annotation(
+        dict(
+            x=47,
+            y=1,
+            yref="paper",
+            xanchor="left",
+            yanchor="top",
+            text="SL S1 begins",
+            showarrow=True,
+        )
+    )
     return stack_figure
 
 
