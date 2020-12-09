@@ -85,7 +85,7 @@ class RidgePlot:
     def _construct_traces(self, sorted_summary):
         """Makes line/fill traces of the data distribution."""
         key_levels = list(self.data)
-        key_levels_x = [i - 2 for i in list(key_levels)]  # x =0, key - 2
+        key_levels_x = [i - 2 for i in list(key_levels)]  # x is 0, key is 2
         vertical_offset = self._calculate_vertical_offset()
         num_specs = len(self.summary)
         specs = blizzcolors.Specs()
@@ -101,6 +101,7 @@ class RidgePlot:
                 y=[baseline_y] * len(key_levels_x),
                 line=dict(width=0.5, color="black"),
                 hoverinfo="skip",
+                mode="lines",
             )
             # the distribution of runs vs key level (the star of the show)
             ridge = go.Scatter(
@@ -108,6 +109,7 @@ class RidgePlot:
                 y=[baseline_y + run for run in runs],
                 fill="tozerox",
                 fillcolor=spec_color,
+                mode="lines",
                 line=dict(width=1, color="black", shape="spline"),
                 name=specs.get_spec_name(spec_id).upper(),
                 text=[f"{y:,}" for y in runs],
