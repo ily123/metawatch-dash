@@ -406,20 +406,14 @@ class RidgePlot:
         fig.update_layout(annotations=self._keep_annotations("all"))
         max_x = self.summary.best_key.max()
         min_x = -2.5 if max_x < 20 else -6 # this is a lazy way to fix label position
-        xaxis = dict(
-            title="<b>KEY LEVEL</b>",
-            range=[min_x, max_x - 1],
-            tickvals=[0] + list(range(3, max_x - 1, 5)),
-            ticktext=["+2"] + ["+" + str(i + 2) for i in range(3, max_x - 1, 5)],
-        )
 
-        xaxis2 = dict(
+        xaxis_template = dict(
             range=[min_x, max_x - 1],
             tickvals=[0] + list(range(3, max_x - 1, 5)),
             ticktext=["+2"] + ["+" + str(i + 2) for i in range(3, max_x - 1, 5)],
-            side="top",
-            overlaying="x",
         )
+        xaxis = dict(title="<b>KEY LEVEL</b>").update(xaxis_template)
+        xaxis2 = dict(side="top",overlaying="x").update(xaxis_template)
 
         bin_ymax = self.data.to_numpy().max()  # tallest spec/key bin
         ymax = 36 * self._calculate_vertical_offset() + bin_ymax + (bin_ymax * 0.1)
