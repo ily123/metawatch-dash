@@ -92,19 +92,19 @@ def make_bubble_plot(data, patch):
     return bubble_fig
 
 
-# current season
-season = "bfa4_postpatch"
 # generate the figures
 db_file_path = "data/summary.sqlite"
-main_summary, week_summary = get_data_from_sqlite(db_file_path, season)
+
+CURRENT_SEASON = "SL1"
+main_summary, week_summary = get_data_from_sqlite(db_file_path, CURRENT_SEASON)
 
 RAW_AGG_DATA = get_raw_data_from_sqlite(db_file_path)
-CURRENT_SEASON = "bfa4_postpatch"
 spec_runs = format_raw_data_main_summary(RAW_AGG_DATA, season=CURRENT_SEASON)
 
 PATCH_NAMES = {
     "bfa4": "BFA Season 4 / 8.3",
     "bfa4_postpatch": "BFA post-patch / 9.0.1",
+    "SL1" : "SL Season 1 / 9.0.2"
 }
 ridgeplot_fig = generate_ridgeplot(spec_runs, PATCH_NAMES[CURRENT_SEASON])
 bubble_fig = make_bubble_plot(spec_runs, PATCH_NAMES[CURRENT_SEASON])
@@ -182,7 +182,6 @@ def construct_figure_header(elements):
 
 def construct_season_selector(id_, ishidden):
     """Constructs dropdown season select menu."""
-
     dropdown = dcc.Dropdown(
         className="dropdown",
         id=id_,
@@ -192,8 +191,9 @@ def construct_season_selector(id_, ishidden):
                 "label": "BFA post-patch (9.0.1)",
                 "value": "bfa4_postpatch",
             },
+            {"label": "SL Season 1 (9.0.2)", "value": "SL1"}
         ],
-        value="bfa4_postpatch",
+        value="SL1",
         clearable=False,
         style={"width": "50%"},
     )
