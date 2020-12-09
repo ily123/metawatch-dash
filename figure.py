@@ -412,8 +412,10 @@ class RidgePlot:
             tickvals=[0] + list(range(3, max_x - 1, 5)),
             ticktext=["+2"] + ["+" + str(i + 2) for i in range(3, max_x - 1, 5)],
         )
-        xaxis = dict(title="<b>KEY LEVEL</b>").update(xaxis_template)
-        xaxis2 = dict(side="top",overlaying="x").update(xaxis_template)
+        xaxis = dict(title="<b>KEY LEVEL</b>")
+        xaxis.update(xaxis_template)
+        xaxis2 = dict(side="top",overlaying="x")
+        xaxis2.update(xaxis_template)
 
         bin_ymax = self.data.to_numpy().max()  # tallest spec/key bin
         ymax = 36 * self._calculate_vertical_offset() + bin_ymax + (bin_ymax * 0.1)
