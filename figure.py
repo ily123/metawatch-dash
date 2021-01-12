@@ -13,7 +13,7 @@ Data is a pandas df formatted as:
 """
 
 import importlib
-from typing import Tuple, Type  # you have to import Type
+from typing import List, Tuple, Type
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -405,7 +405,7 @@ class RidgePlot:
         fig.update_layout(updatemenus=self.buttons)
         fig.update_layout(annotations=self._keep_annotations("all"))
         max_x = self.summary.best_key.max()
-        min_x = -2.5 if max_x < 20 else -6 # this is a lazy way to fix label position
+        min_x = -2.5 if max_x < 20 else -6  # this is a lazy way to fix label position
 
         xaxis_template = dict(
             range=[min_x, max_x - 1],
@@ -414,7 +414,7 @@ class RidgePlot:
         )
         xaxis = dict(title="<b>KEY LEVEL</b>")
         xaxis.update(xaxis_template)
-        xaxis2 = dict(side="top",overlaying="x")
+        xaxis2 = dict(side="top", overlaying="x")
         xaxis2.update(xaxis_template)
 
         bin_ymax = self.data.to_numpy().max()  # tallest spec/key bin
@@ -848,3 +848,121 @@ class StackedBarChart(StackedChart):
                 )
             )
         return traces
+
+
+class MetaIndexBarChart:
+    """Horizontal bar chart for the Meta index data.
+
+    Warning: Data must come from a single season.
+    """
+
+    def __init__(self, data: pd.DataFrame, spec_role: str) -> None:
+        """Inits with key runs numbers and target spec role.
+
+        Parameters
+        ----------
+        data : pd.DataFrame
+            dataframe where data[spec, key level] = number of keys
+        spec_role : str
+            specs to include in the figure one of {melee, range, tank, healer, all}
+        """
+        self.data = data
+        self.spec_role = spec_role
+        # this is a bit of a hack, we assume that
+        # 1/5 of all runs slots go to tanks
+        # 1/5 to healers
+        # 3/5 to dps --> we do not separate dps into melee and range
+        self.total_character_runs = self.data.run_count.sum()
+
+    def create_figure(self, bounds: List[int]) -> go.Figure:
+        """Creates horizontal bar figure for meta index.
+
+        Parameters
+        ----------
+        bounds : List[int]
+            list of ints that defines key level cohorts to calculate the index
+
+        Returns
+        -------
+        figure : go.Figure
+            The bar chart of spec meta indices
+        """
+        spec_meta = self._calculate_index(bounds)
+        spec_meta.sort_values(by="spec_meta_index", inplace=True)
+        # name=specs.get_spec_name(spec_id).upper(),
+        spec_utils = blizzcolors.Specs()
+        trace = go.Bar(
+            x=list(spec_meta.spec_meta_index),
+            y=list(range(len(spec_meta))),
+            marker_color=[
+                "rgba(%d,%d,%d,0.9)" % spec_utils.get_color(spec_id)
+                for spec_id in spec_meta.index
+            ],
+            marker_line_color="black",
+            orientation="h",
+        )
+        fig = go.Figure(data=trace, layout_width=900, layout_height=1100)
+        # This is annoying... I have to update bar labels separetly.
+        # I can't do it as part of go.Bar() definition, because some of the labels
+        # are identical and plotly merges them into a single bar
+        # (eg Frost mage and Frost DK are shown as a single bar)
+        fig.update_yaxes(
+            tickmode="array",
+            tickvals=trace.y,
+            ticktext=[
+                spec_utils.get_spec_name(spec_id).upper() for spec_id in spec_meta.index
+            ],
+        )
+        return fig
+
+    def _calculate_index(self, bounds: List[int]) -> pd.DataFrame:
+        """Calculates meta strength index for each spec.
+
+        Parameters
+        ----------
+        bounds : List[int]
+            list of ints that defines key level cohorts to calculate the index
+
+        Returns
+        -------
+        spec_meta_index : pd.DataFrame
+            ratio of specs' representation between the two cohorts
+        """
+        pop_low = bounds[0]
+        pop_high = bounds[1]
+        meta_low = bounds[2]
+        meta_high = bounds[3]
+        # calculate representation of each spec as pct of total
+        # at population level and at meta level
+        population_spec_pct = self._calc_spec_pct_in_bin(pop_low, pop_high)
+        meta_spec_pct = self._calc_spec_pct_in_bin(meta_low, meta_high)
+        # meta strength index is the ratio between the two
+        spec_meta_index = meta_spec_pct / population_spec_pct
+        spec_meta_index.columns = ["spec_meta_index"]
+        return spec_meta_index
+
+    def _calc_spec_pct_in_bin(self, lower_bound: int, upper_bound: int) -> pd.DataFrame:
+        """Calculates representation of each spec as pct within key level bounds.
+
+        Parameters
+        ----------
+        lower_bound : int
+            lower bound of the key level cohort
+        upper_bound : int
+            upper bound of the key level cohort
+
+        Returns
+        -------
+        cohort_spec_pct : pd.DataFrame
+            counts by each spec within the cohort, converted to percent
+        """
+        cohort_spec_counts = (
+            self.data.loc[
+                (self.data.level >= lower_bound) & (self.data.level <= upper_bound),
+                ["spec", "run_count"],
+            ]
+            .groupby("spec")
+            .sum()
+        )
+        cohort_spec_pct = cohort_spec_counts / cohort_spec_counts.sum()
+        return cohort_spec_pct
