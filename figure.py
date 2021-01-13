@@ -953,7 +953,7 @@ class MetaIndexBarChart:
                 x=anno[0],
                 y=anno[1],
                 text="<b>%s</b>" % anno[2],
-                showarrow=True,  # hmm, with True there is no arrow, but text is centered
+                showarrow=True,  # with True there is no arrow, but text is centered
                 xanchor="left",
                 yanchor="middle",
                 borderpad=0,
@@ -989,6 +989,8 @@ class MetaIndexBarChart:
         # meta strength index is the ratio between the two
         spec_meta_index = meta_spec_pct / population_spec_pct
         spec_meta_index.columns = ["spec_meta_index"]
+        spec_meta_index.fillna(0, inplace=True)
+        print(spec_meta_index)
         return spec_meta_index
 
     def _calc_spec_pct_in_bin(self, lower_bound: int, upper_bound: int) -> pd.DataFrame:
