@@ -2,6 +2,7 @@ import datetime
 import os
 import sqlite3
 import time
+from typing import Type
 
 import dash
 import dash_core_components as dcc
@@ -92,7 +93,15 @@ def make_bubble_plot(data, patch):
     return bubble_fig
 
 
-# generate the figures
+def generate_meta_index_barchart(data, patch) -> Type["go.Figure"]:
+    """Creates default meta bar chart."""
+    print(data)
+    fig = figure.MetaIndexBarChart(data.loc[data.season == "SL1", :], spec_role="melee")
+    spec_meta_fig = fig.create_figure([0, 14, 15, 30])
+    return spec_meta_fig
+
+
+# generate default figures
 db_file_path = "data/summary.sqlite"
 
 CURRENT_SEASON = "SL1"
@@ -104,7 +113,7 @@ spec_runs = format_raw_data_main_summary(RAW_AGG_DATA, season=CURRENT_SEASON)
 PATCH_NAMES = {
     "bfa4": "BFA Season 4 / 8.3",
     "bfa4_postpatch": "BFA post-patch / 9.0.1",
-    "SL1" : "SL Season 1 / 9.0.2"
+    "SL1": "SL Season 1 / 9.0.2",
 }
 ridgeplot_fig = generate_ridgeplot(spec_runs, PATCH_NAMES[CURRENT_SEASON])
 bubble_fig = make_bubble_plot(spec_runs, PATCH_NAMES[CURRENT_SEASON])
@@ -115,6 +124,8 @@ stacked_levels_fig = generate_stack_figure(
 stacked_week_fig = generate_stack_figure(
     week_summary, "week", "mdps", "bar", PATCH_NAMES[CURRENT_SEASON]
 )
+meta_barchart = generate_meta_index_barchart(RAW_AGG_DATA, CURRENT_SEASON)
+
 
 data_last_updated = datetime.datetime.fromtimestamp(
     int(os.path.getmtime(db_file_path))
@@ -191,7 +202,7 @@ def construct_season_selector(id_, ishidden):
                 "label": "BFA post-patch (9.0.1)",
                 "value": "bfa4_postpatch",
             },
-            {"label": "SL Season 1 (9.0.2)", "value": "SL1"}
+            {"label": "SL Season 1 (9.0.2)", "value": "SL1"},
         ],
         value="SL1",
         clearable=False,
@@ -211,46 +222,27 @@ figure_header_elements = {
             we count all keys completed this season. Then, we break that number down
             by spec & key level (first panel), by spec alone (second panel),
             or just by key level (third panel).
-
-            The first panel tells you how many runs each spec recorded
-            at each key level.
-            This tells you two things: how popular each spec is (the
-            size of the colored area corresponds to the total number of runs each
-            spec recorded this season),
-            and which specs are most successful at high-end pushing
-            (those are the specs with the longest tails in the 20+ range).
-
-            The second panel gives you a
-            clearer look at the total number of runs by each spec, while the third
-            panel is a spec-agnostic look at runs broken down by key level.
             """,
         insight="""
             * Most specs are within 2-3 key levels of the cutting edge performers.
-            Even the worst spec has done a +25.
             * Most specs that are popular with the general population
             are also the cutting-edge meta specs. It's likely that
-            top-end meta propagates itself down to +15 level.
-            * The bottom 4 to 6 specs are not played at
-            any level of keystone. One exception are the Holy priests. They don't
-            perform well at high-end keys, but are popular with the general population.
-            I assume H priests are popular with the more casual players who just want
-            a no-hassle heroic raid healer.
+            top-end meta propagates itself down to the population level.
+            * The bottom few specs are also the esoteric specs not widely played
+            in the population (eg: feral, frost, survival).
             * The takeaway for ordinary players is that you should stay
             away from the very bottom specs, but feel free to play anything else.
             """,
         factoid="""
-            * Once you get past +15, the number of key runs decays exponentially.
-            Every two key levels, the number of runs drops by ~50%.
-            So if you are doing +20 keys, you are already in the top 3%
-            of the population.
-            * One way to tell if a spec is truly dead is to compare the number of runs
-            it has at key level +15 vs +2. If there are more runs at +2 than at +15,
-            it means that the spec is only played by newbie characters.
-            Once these characters get to weekly +15s, they switch specs.
-            Most of the bottom 4-6 specs are like that. Meanwhile,
-            there are low-population specs that do see more play at +15 than
-            at +2 (eg: feral druid, frost dk, demo lock). These are specs that are
-            played at end-game, even if not at cutting edge.
+            * Once you get past the "best chest reward" level of keys,
+            the number of key runs decays exponentially. Every two key levels,
+            the number of runs drops by ~50%. Groups that are considered pedenstrian
+            by high-end standards, are probably within the top 2-3% of the population!
+            Check panel 3 for the exact key level percentiles.
+            * One way to tell if a spec is dead is to compare the number of runs
+            it has at key level +2 vs the chest reward level. If there are more runs
+            at +2 than at chest reward level, it means that the spec is not played
+            in the end game. The buttom specs are often like that.
             """,
     ),
     "figure2": dict(
@@ -259,19 +251,20 @@ figure_header_elements = {
         summary="""
             The number of runs in the high-end bracket is so low,
             that in figure 1 it's hard to see the difference between counts
-            once you get past +20. To solve this problem, we normalize counts
+            once you get into high-level keys. To solve this problem, we normalize counts
             within each key bracket, and show spec popularity in terms of percent.
 
             Hint: Click on the spec names in the legend to add/remove them from the
-            figure.
+            figure. Double click on the name to show the spec alone.
             """,
         insight="""
-            * The meta starts kicking in at +16. That's where most specs begin to
-            lose their share of representation to the meta classes.
+            * The meta starts kicking in once rewards are no longer relevant (i.e. once
+            you pass the level needed for the weekly chest reward). That's where casual
+            players stop playing, and dedicated pushers (and the meta classes they play)
+            take over the population.
             * Some non-meta specs stay relatively stable (or even gain share)
-            in mid-range keys (disc, brew, shadow, arms), and only begin disappearing
-            at higher levels.
-            Play these if you want to feel special, yet somewhat competitive :)
+            in mid-range keys. Go through each spec one at a time to identify them.
+            Play these specs if you want to feel special, yet somewhat competitive :)
             """,
     ),
     "figure3": dict(
@@ -279,8 +272,8 @@ figure_header_elements = {
         header_title="WEEKLY TOP 500",
         summary="""
             To see how the meta changes through the season, we sample the top 500 runs
-            for each dungeon (that's 6000 total keys) for each week. We then count the
-            number of times each spec appears in this weekly top 500 sample.
+            _from each_ dungeon for every week. We then count the
+            number of times each spec appears in top 500 sample.
 
             Hint: Click on the spec names in the legend to add/remove them from the
             figure.
@@ -288,28 +281,45 @@ figure_header_elements = {
         insight="""
             * The meta is very stable within a single patch. Spec representation within
             top 500 rarely changes.
-            * You do see *some* meta changes.
-            Two examples this patch are the Balance Druids and Brewmaster Monks. Both
-            started out this season strong, but faded away as time went by. These specs
-            were popular in S3 for dealing with Beguiling, so there was carry-over at
-            the start of S4 (additionally, monks were the default tanks for raid prog
-            which probably boosted their repsentation in keys early this season).
-            However, Balance was adjusted out of the meta completely by mid-season, and
-            BrM fell from ~25% to ~10%.
+            * When changes do happen, it's usually between patches, due to major
+            buff/nerfs. They are very easy to see on the graph.
             """,
         factoid="""
-            If you notice, the data has a zig-zag quality to it.
-            Spec numbers, especially the top spec, go up and down each week.
+            * If you notice, the data has a zig-zag quality to it.
+            Spec numbers, especially the meta specs, go up and down each week.
             That's the effect of the Tyrannical/Fort split.
             On Tyrannical weeks, top pushers are likely to bench their meta-class mains
             and play non-meta alts (or not play at all).
             As a result on Tyrannical weeks, the share of the meta specs in the top 500
             drops.
-            Likewise, the share of meta specs rises to its max during push weeks
-            (week 27 and 29 were the back to back push fort weeks, for example).
+            * The same logic applies to between-expansion x.0.1 patches. During these
+            patches people just play whatever they want, and the top 500 sample
+            looks similar to the population.
+            """,
+    ),
+    "figure4": dict(
+        anchor_id="figure4",
+        header_title="SPEC TIER LIST",
+        summary="""
+            To rank specs, we use the Meta Ratio score. The "ratio" is between the spec's
+            representation in the meta vs its representation in the population.
+            For example, let's say a spec makes up 3% of all players in the population,
+            but 6% in the meta. That spec's ratio is 6% / 3% = 2, i.e. that spec is
+            overrepresented in the meta by a factor of 2.
 
-            Additionally, as we get closer to the end of the patch, many pushers
-            stop playing, so we see non-meta specs gain share past week 30.
+            At this point in SL season 1, I define the "population" as all keys level
+            2 to 15, and the "meta" as all keys 16 and above. You can adjust these
+            using dropdowns below.
+            """,
+        insight="""
+            We can break down specs into tiers based on their ratio. I do it as
+            follows:
+
+            * S-tier: ratio of at least 1.5
+            * A-tier: ratio between 1 and 1.5
+            * B-tier: ratio between 0.5 and 1
+            * C-tier: ratio below 0.5, but greater than 0
+            * F-tier: ratio of 0 (the spec is not present in the high-level bin at all)
             """,
     ),
 }
@@ -495,6 +505,20 @@ app.layout = html.Div(
                 id="week-stacked-fig", figure=stacked_week_fig, config=fig_config
             ),
             html.Hr(),
+            html.Div(
+                className="figure-header",
+                children=construct_figure_header(figure_header_elements["figure4"]),
+            ),
+            dcc.Dropdown(
+                className="dropdown",
+                id="figure4-dropdown",
+                options=role_options,
+                placeholder="SELECT SPEC ROLE",
+                value="tank",
+                clearable=False,
+            ),
+            dcc.Graph(id="meta-index-fig", figure=meta_barchart, config=fig_config),
+            html.Hr(),
             html.Div(id="faq", children=errata_and_faq),
         ],
     )
@@ -554,7 +578,7 @@ def update_figure3(role, isbar, season):
         chart_type="week",
         role=role,
         stack_type=isbar,
-        patch= "since BFA S4",
+        patch="since BFA S4",
     )
     # add timeline labels
     stack_figure.add_annotation(
