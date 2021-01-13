@@ -900,6 +900,10 @@ class MetaIndexBarChart:
                 "rgba(%d,%d,%d,0.9)" % spec_utils.get_color(spec_id)
                 for spec_id in spec_meta.index
             ],
+            text=[
+                spec_utils.get_spec_name(spec_id).upper() for spec_id in spec_meta.index
+            ],
+            hovertemplate="%{text}, meta ratio = %{x:1.2f}<extra></extra>",
             marker_line_color="black",
             orientation="h",
         )
@@ -917,7 +921,7 @@ class MetaIndexBarChart:
                 xanchor="center",
                 yanchor="top",
             ),
-            yaxis_range=[-1, 36],
+            yaxis_range=[-1, len(spec_meta.index)],
         )
         # This is annoying... I have to update bar labels separetly.
         # I can't do it as part of go.Bar() definition, because some of the labels
