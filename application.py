@@ -136,6 +136,7 @@ figure_list = html.Ul(
         html.Li(html.A("Overview of all keys completed this season", href="#figure1")),
         html.Li(html.A("Detailed Look at Spec Performance", href="#figure2")),
         html.Li(html.A("Weekly top 500", href="#figure3")),
+        html.Li(html.A("Spec Tier list", href="#figure4")),
         html.Li(html.A("FAQ", href="#faq")),
     ]
 )
