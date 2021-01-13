@@ -2,7 +2,7 @@ import datetime
 import os
 import sqlite3
 import time
-from typing import Type
+from typing import List, Type
 
 import dash
 import dash_core_components as dcc
@@ -93,11 +93,13 @@ def make_bubble_plot(data, patch):
     return bubble_fig
 
 
-def generate_meta_index_barchart(data, patch) -> Type["go.Figure"]:
-    """Creates default meta bar chart."""
+def generate_meta_index_barchart(
+    data: pd.DataFrame, patch: str, boundary: List[int]
+) -> Type["go.Figure"]:
+    """Creates meta bar chart."""
     print(data)
     fig = figure.MetaIndexBarChart(data.loc[data.season == "SL1", :], spec_role="melee")
-    spec_meta_fig = fig.create_figure([0, 14, 15, 30])
+    spec_meta_fig = fig.create_figure(boundary)
     return spec_meta_fig
 
 
@@ -109,6 +111,8 @@ main_summary, week_summary = get_data_from_sqlite(db_file_path, CURRENT_SEASON)
 
 RAW_AGG_DATA = get_raw_data_from_sqlite(db_file_path)
 spec_runs = format_raw_data_main_summary(RAW_AGG_DATA, season=CURRENT_SEASON)
+print(spec_runs)
+
 
 PATCH_NAMES = {
     "bfa4": "BFA Season 4 / 8.3",
@@ -124,7 +128,9 @@ stacked_levels_fig = generate_stack_figure(
 stacked_week_fig = generate_stack_figure(
     week_summary, "week", "mdps", "bar", PATCH_NAMES[CURRENT_SEASON]
 )
-meta_barchart = generate_meta_index_barchart(RAW_AGG_DATA, CURRENT_SEASON)
+meta_barchart = generate_meta_index_barchart(
+    RAW_AGG_DATA, CURRENT_SEASON, boundary=[0, 14, 15, 30]
+)
 
 
 data_last_updated = datetime.datetime.fromtimestamp(
@@ -530,7 +536,6 @@ app.layout = html.Div(
                     )
                 ),
                 value=[2, 15],
-                allowCross=False,
             ),
             dcc.RangeSlider(
                 id="meta-slider",
@@ -544,7 +549,6 @@ app.layout = html.Div(
                     )
                 ),
                 value=[16, RAW_AGG_DATA.level.max()],
-                allowCross=False,
             ),
             dcc.Graph(id="meta-index-fig", figure=meta_barchart, config=fig_config),
             html.Hr(),
@@ -556,13 +560,24 @@ app.layout = html.Div(
 
 @app.callback(
     Output(component_id="meta-index-fig", component_property="figure"),
-    Input(component_id="population-slider", component_property="value"),
+    [
+        Input(component_id="population-slider", component_property="value"),
+        Input(component_id="meta-slider", component_property="value"),
+    ],
     prevent_initial_call=True,
 )
-def update_figure4(population_slider):
+def update_figure4(population_slider, meta_slider):
     """Updates tier list figure based on slider values."""
-    print("hi")
-    return None
+    print(population_slider)
+    population_min, population_max = population_slider
+    meta_min, meta_max = meta_slider
+    meta_barchart = generate_meta_index_barchart(
+        RAW_AGG_DATA,
+        CURRENT_SEASON,
+        boundary=[population_min, population_max, meta_min, meta_max],
+    )
+    print(population_min)
+    return meta_barchart
 
 
 @app.callback(
