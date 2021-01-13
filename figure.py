@@ -889,8 +889,10 @@ class MetaIndexBarChart:
         """
         spec_meta = self._calculate_index(bounds)
         spec_meta.sort_values(by="spec_meta_index", inplace=True)
-        # name=specs.get_spec_name(spec_id).upper(),
         spec_utils = blizzcolors.Specs()
+
+        fig = go.Figure()
+        fig = self._add_tier_annotations(fig)
         trace = go.Bar(
             x=list(spec_meta.spec_meta_index),
             y=list(range(len(spec_meta))),
@@ -901,7 +903,22 @@ class MetaIndexBarChart:
             marker_line_color="black",
             orientation="h",
         )
-        fig = go.Figure(data=trace, layout_width=900, layout_height=1100)
+        fig.add_traces(trace)
+
+        fig.update_layout(
+            width=900,
+            height=1100,
+            xaxis_title="Meta Ratio (spec % at meta level / spec % at population level)",
+            showlegend=False,
+            title=dict(
+                text="Spec Tiers",
+                font_size=15,
+                x=0.5,
+                xanchor="center",
+                yanchor="top",
+            ),
+            yaxis_range=[-1, 36],
+        )
         # This is annoying... I have to update bar labels separetly.
         # I can't do it as part of go.Bar() definition, because some of the labels
         # are identical and plotly merges them into a single bar
@@ -913,6 +930,39 @@ class MetaIndexBarChart:
                 spec_utils.get_spec_name(spec_id).upper() for spec_id in spec_meta.index
             ],
         )
+        return fig
+
+    @staticmethod
+    def _add_tier_annotations(fig: go.Figure) -> go.Figure:
+        """Adds tier annotations to the figure."""
+        fig.add_traces(
+            [
+                go.Scatter(x=[x_, x_], y=[-2, 40], line_color="gray", line_dash="dash")
+                for x_ in [1.5, 1, 0.5]
+            ]
+        )
+
+        annos = [
+            (1.75, 10, "S TIER"),
+            (1.25, 10, "A TIER"),
+            (0.75, 10, "B TIER"),
+            (0.25, 10, "C TIER"),
+        ]
+        for anno in annos:
+            annotation = dict(
+                x=anno[0],
+                y=anno[1],
+                text="<b>%s</b>" % anno[2],
+                showarrow=True,  # hmm, with True there is no arrow, but text is centered
+                xanchor="left",
+                yanchor="middle",
+                borderpad=0,
+                font=dict(color="black", size=50, family="Monaco, regular"),
+                opacity=0.7,
+                textangle=90,
+            )
+            fig.add_annotation(annotation)
+
         return fig
 
     def _calculate_index(self, bounds: List[int]) -> pd.DataFrame:
