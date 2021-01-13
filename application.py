@@ -518,12 +518,51 @@ app.layout = html.Div(
                 value="tank",
                 clearable=False,
             ),
+            dcc.RangeSlider(
+                id="population-slider",
+                min=2,
+                max=RAW_AGG_DATA.level.max(),
+                step=None,
+                marks=dict(
+                    zip(
+                        range(2, RAW_AGG_DATA.level.max() + 1),
+                        [str(i) for i in range(2, RAW_AGG_DATA.level.max() + 1)],
+                    )
+                ),
+                value=[2, 15],
+                allowCross=False,
+            ),
+            dcc.RangeSlider(
+                id="meta-slider",
+                min=2,
+                max=RAW_AGG_DATA.level.max(),
+                step=None,
+                marks=dict(
+                    zip(
+                        range(2, RAW_AGG_DATA.level.max() + 1),
+                        [str(i) for i in range(2, RAW_AGG_DATA.level.max() + 1)],
+                    )
+                ),
+                value=[16, RAW_AGG_DATA.level.max()],
+                allowCross=False,
+            ),
             dcc.Graph(id="meta-index-fig", figure=meta_barchart, config=fig_config),
             html.Hr(),
             html.Div(id="faq", children=errata_and_faq),
         ],
     )
 )
+
+
+@app.callback(
+    Output(component_id="meta-index-fig", component_property="figure"),
+    Input(component_id="population-slider", component_property="value"),
+    prevent_initial_call=True,
+)
+def update_figure4(population_slider):
+    """Updates tier list figure based on slider values."""
+    print("hi")
+    return None
 
 
 @app.callback(
