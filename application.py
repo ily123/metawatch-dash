@@ -512,6 +512,7 @@ app.layout = html.Div(
                 id="week-stacked-fig", figure=stacked_week_fig, config=fig_config
             ),
             html.Hr(),
+            construct_season_selector(id_="fig4-season-switch", ishidden=True),
             html.Div(
                 className="figure-header",
                 children=construct_figure_header(figure_header_elements["figure4"]),
@@ -563,17 +564,18 @@ app.layout = html.Div(
     [
         Input(component_id="population-slider", component_property="value"),
         Input(component_id="meta-slider", component_property="value"),
+        Input(component_id="fig4-season-switch", component_property="value"),
     ],
     prevent_initial_call=True,
 )
-def update_figure4(population_slider, meta_slider):
+def update_figure4(population_slider: List[int], meta_slider: List[int], season: str):
     """Updates tier list figure based on slider values."""
     print(population_slider)
     population_min, population_max = population_slider
     meta_min, meta_max = meta_slider
     meta_barchart = generate_meta_index_barchart(
         RAW_AGG_DATA,
-        CURRENT_SEASON,
+        season,
         boundary=[population_min, population_max, meta_min, meta_max],
     )
     print(population_min)
