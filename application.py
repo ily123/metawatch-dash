@@ -160,12 +160,12 @@ data_last_updated = datetime.datetime.fromtimestamp(
 figure_list = html.Ul(
     children=[
         html.Li(html.A("Overview of all keys completed this season", href="#figure1")),
-        html.Li(html.A("Detailed Look at Spec Performance", href="#figure2")),
+        html.Li(html.A("Detailed look at spec performance", href="#figure2")),
         html.Li(html.A("Weekly top 500", href="#figure3")),
         html.Li(
             html.A(
                 children=html.P(
-                    "Spec Tier list (new)",
+                    "Spec tier list (new)",
                     style={"color": "red", "font-weight": "bold"},
                 ),
                 href="#figure4",
