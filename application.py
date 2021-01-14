@@ -94,11 +94,13 @@ def make_bubble_plot(data, patch):
 
 
 def generate_meta_index_barchart(
-    data: pd.DataFrame, patch: str, boundary: List[int]
+    data: pd.DataFrame, season: str, boundary: List[int]
 ) -> Type["go.Figure"]:
     """Creates meta bar chart."""
     print(data)
-    fig = figure.MetaIndexBarChart(data.loc[data.season == "SL1", :], spec_role="melee")
+    fig = figure.MetaIndexBarChart(
+        data.loc[data.season == season, :], spec_role="melee"
+    )
     spec_meta_fig = fig.create_figure(boundary)
     return spec_meta_fig
 
@@ -108,11 +110,8 @@ db_file_path = "data/summary.sqlite"
 
 CURRENT_SEASON = "SL1"
 main_summary, week_summary = get_data_from_sqlite(db_file_path, CURRENT_SEASON)
-
 RAW_AGG_DATA = get_raw_data_from_sqlite(db_file_path)
 spec_runs = format_raw_data_main_summary(RAW_AGG_DATA, season=CURRENT_SEASON)
-print(spec_runs)
-
 
 PATCH_NAMES = {
     "bfa4": "BFA Season 4 / 8.3",
@@ -218,6 +217,41 @@ def construct_season_selector(id_, ishidden):
     if ishidden:
         dropdown.style = {"display": "none"}
     return dropdown
+
+
+def construct_slider(
+    id_: str, range_max: int, selected_range: List[int]
+) -> dcc.RangeSlider:
+    """Constructs slider for tier list figure.
+
+    Parameters
+    ----------
+    id_ : str
+        name of the component, for callbacks
+    range_max : int
+        max value of slider range
+    selected_range : List[int, int]
+        default value position of the slider
+
+    Returns
+    ------
+    slider : dcc.RangeSlider
+
+    """
+    slider = dcc.RangeSlider(
+        id=id_,
+        min=2,
+        max=range_max,
+        step=None,
+        marks=dict(
+            zip(
+                range(2, range_max + 1),
+                [str(i) for i in range(2, range_max + 1)],
+            )
+        ),
+        value=selected_range,
+    )
+    return slider
 
 
 figure_header_elements = {
@@ -525,31 +559,21 @@ app.layout = html.Div(
                 value="tank",
                 clearable=False,
             ),
-            dcc.RangeSlider(
-                id="population-slider",
-                min=2,
-                max=RAW_AGG_DATA.level.max(),
-                step=None,
-                marks=dict(
-                    zip(
-                        range(2, RAW_AGG_DATA.level.max() + 1),
-                        [str(i) for i in range(2, RAW_AGG_DATA.level.max() + 1)],
-                    )
-                ),
-                value=[2, 15],
+            html.P("Population-level keys"),
+            construct_slider(
+                id_="population-slider",
+                range_max=RAW_AGG_DATA.loc[
+                    RAW_AGG_DATA.season == CURRENT_SEASON, "level"
+                ].max(),
+                selected_range=[2, 15],
             ),
-            dcc.RangeSlider(
-                id="meta-slider",
-                min=2,
-                max=RAW_AGG_DATA.level.max(),
-                step=None,
-                marks=dict(
-                    zip(
-                        range(2, RAW_AGG_DATA.level.max() + 1),
-                        [str(i) for i in range(2, RAW_AGG_DATA.level.max() + 1)],
-                    )
-                ),
-                value=[16, RAW_AGG_DATA.level.max()],
+            html.P("Meta-level keys"),
+            construct_slider(
+                id_="meta-slider",
+                range_max=RAW_AGG_DATA.loc[
+                    RAW_AGG_DATA.season == CURRENT_SEASON, "level"
+                ].max(),
+                selected_range=[16, 99],  # select it to the end
             ),
             dcc.Graph(id="meta-index-fig", figure=meta_barchart, config=fig_config),
             html.Hr(),
@@ -569,8 +593,7 @@ app.layout = html.Div(
     prevent_initial_call=True,
 )
 def update_figure4(population_slider: List[int], meta_slider: List[int], season: str):
-    """Updates tier list figure based on slider values."""
-    print(population_slider)
+    """Updates tier list figure based on slider inputs."""
     population_min, population_max = population_slider
     meta_min, meta_max = meta_slider
     meta_barchart = generate_meta_index_barchart(
@@ -578,7 +601,6 @@ def update_figure4(population_slider: List[int], meta_slider: List[int], season:
         season,
         boundary=[population_min, population_max, meta_min, meta_max],
     )
-    print(population_min)
     return meta_barchart
 
 
@@ -688,7 +710,7 @@ def update_figure3(role, isbar, season):
 )
 def set_season(season):
     """Sets season values of individual figures via hidden switches."""
-    return [season] * 5
+    return [season] * 6  # this is the number of hidden switches
 
 
 # this is a very hacky way to add tracking, see this instead:
