@@ -681,12 +681,13 @@ def update_figure3(role, isbar, season):
         Output(component_id="fig1-key-hist-season-switch", component_property="value"),
         Output(component_id="fig2-season-switch", component_property="value"),
         Output(component_id="fig3-season-switch", component_property="value"),
+        Output(component_id="fig4-season-switch", component_property="value"),
     ],
     Input(component_id="master-season-switch", component_property="value"),
     prevent_initial_call=True,
 )
-def set_data(season):
-    """Change data var inside DATA_CONTAINER."""
+def set_season(season):
+    """Sets season values of individual figures via hidden switches."""
     return [season] * 5
 
 
