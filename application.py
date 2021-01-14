@@ -2,7 +2,7 @@ import datetime
 import os
 import sqlite3
 import time
-from typing import List, Type
+from typing import List, Tuple, Type
 
 import dash
 import dash_core_components as dcc
@@ -260,7 +260,6 @@ def construct_slider(
     Returns
     ------
     slider : dcc.RangeSlider
-
     """
     slider = dcc.RangeSlider(
         id=id_,
@@ -584,20 +583,26 @@ app.layout = html.Div(
                 clearable=False,
             ),
             html.P("Population-level keys"),
-            construct_slider(
-                id_="population-slider",
-                range_max=RAW_AGG_DATA.loc[
-                    RAW_AGG_DATA.season == CURRENT_SEASON, "level"
-                ].max(),
-                selected_range=[2, 15],
+            html.Div(
+                id="population-slider-wrapper",
+                children=construct_slider(
+                    id_="population-slider",
+                    range_max=RAW_AGG_DATA.loc[
+                        RAW_AGG_DATA.season == CURRENT_SEASON, "level"
+                    ].max(),
+                    selected_range=[2, 15],
+                ),
             ),
             html.P("Meta-level keys"),
-            construct_slider(
-                id_="meta-slider",
-                range_max=RAW_AGG_DATA.loc[
-                    RAW_AGG_DATA.season == CURRENT_SEASON, "level"
-                ].max(),
-                selected_range=[16, 99],  # select it to the end
+            html.Div(
+                id="meta-slider-wrapper",
+                children=construct_slider(
+                    id_="meta-slider",
+                    range_max=RAW_AGG_DATA.loc[
+                        RAW_AGG_DATA.season == CURRENT_SEASON, "level"
+                    ].max(),
+                    selected_range=[16, 99],  # select it to the end
+                ),
             ),
             dcc.Graph(id="meta-index-fig", figure=meta_barchart, config=fig_config),
             html.Hr(),
@@ -605,6 +610,42 @@ app.layout = html.Div(
         ],
     )
 )
+
+
+@app.callback(
+    [
+        Output(component_id="population-slider-wrapper", component_property="children"),
+        Output(component_id="meta-slider-wrapper", component_property="children"),
+    ],
+    Input(component_id="master-season-switch", component_property="value"),
+    prevent_initial_call=True,
+)
+def update_slider_max_range(season: str) -> Tuple[dcc.RangeSlider]:
+    """Updates tier list sliders based on season selected in the master switch.
+
+    Parameters
+    ----------
+    season : str
+        season for which to plot the figure
+
+    Returns
+    --------
+    population_slider : dcc.RangeSlider
+        updated population slider
+    meta_slider : dcc.RangeSlider
+        updated meta slider
+    """
+    population_slider = construct_slider(
+        id_="population-slider",
+        range_max=RAW_AGG_DATA.loc[RAW_AGG_DATA.season == season, "level"].max(),
+        selected_range=[2, 15],  # select it to the end
+    )
+    meta_slider = construct_slider(
+        id_="meta-slider",
+        range_max=RAW_AGG_DATA.loc[RAW_AGG_DATA.season == season, "level"].max(),
+        selected_range=[16, 99],  # select it to the end
+    )
+    return population_slider, meta_slider
 
 
 @app.callback(
