@@ -381,7 +381,7 @@ figure_header_elements = {
 
             At this point in SL season 1, I define the "population" as all keys level
             2 to 15, and the "meta" as all keys 16 and above. You can adjust these
-            using dropdowns below.
+            using sliders below.
             """,
         insight="""
             We can break down specs into tiers based on their ratio. I do it as
