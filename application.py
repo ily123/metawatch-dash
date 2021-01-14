@@ -674,6 +674,22 @@ def update_figure3(role, isbar, season):
     return stack_figure
 
 
+@app.callback(
+    [
+        Output(component_id="fig1-ridgeplot-season-switch", component_property="value"),
+        Output(component_id="fig1-bubble-season-switch", component_property="value"),
+        Output(component_id="fig1-key-hist-season-switch", component_property="value"),
+        Output(component_id="fig2-season-switch", component_property="value"),
+        Output(component_id="fig3-season-switch", component_property="value"),
+    ],
+    Input(component_id="master-season-switch", component_property="value"),
+    prevent_initial_call=True,
+)
+def set_data(season):
+    """Change data var inside DATA_CONTAINER."""
+    return [season] * 5
+
+
 # this is a very hacky way to add tracking, see this instead:
 # https://community.plotly.com/t/how-to-add-javascript-code-from-adsense-into-dash-app/5370/6
 app.index_string = """<!DOCTYPE html>
