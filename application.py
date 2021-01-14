@@ -9,9 +9,16 @@ import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 from dash.dependencies import Input, Output
 
 import figure
+
+PATCH_NAMES = {
+    "bfa4": "BFA Season 4 / 8.3",
+    "bfa4_postpatch": "BFA post-patch / 9.0.1",
+    "SL1": "SL Season 1 / 9.0.2",
+}
 
 
 def get_data_from_sqlite(db_file_path, season):
@@ -94,14 +101,33 @@ def make_bubble_plot(data, patch):
 
 
 def generate_meta_index_barchart(
-    data: pd.DataFrame, season: str, boundary: List[int]
-) -> Type["go.Figure"]:
-    """Creates meta bar chart."""
-    print(data)
+    data: pd.DataFrame, season: str, boundary: List[int], highlight: str
+) -> go.Figure:
+    """Creates meta bar chart.
+
+    Parameters:
+    ----------
+    data : pd.DataFrame
+        df with 4 columns (spec, season, level, count)
+    season : str
+        season for which to plot the figure
+    boundary : list[int]
+        list of level cutoffs that defines the population vs meta cohort
+    highlight : str
+        chose which role to color {mdps, rdps, tank, healer, all}
+
+    Returns
+    -------
+    spec_meta_fig : go.Figure
+        bar chart of the meta ratios for each spec
+    """
     fig = figure.MetaIndexBarChart(
-        data.loc[data.season == season, :], spec_role="melee"
+        data.loc[data.season == season, :],
+        spec_role=highlight,
     )
     spec_meta_fig = fig.create_figure(boundary)
+    patch_name = PATCH_NAMES[season]
+    spec_meta_fig.update_layout(title_text="<b>SPEC TIER LIST (%s)</b>" % patch_name)
     return spec_meta_fig
 
 
@@ -113,11 +139,6 @@ main_summary, week_summary = get_data_from_sqlite(db_file_path, CURRENT_SEASON)
 RAW_AGG_DATA = get_raw_data_from_sqlite(db_file_path)
 spec_runs = format_raw_data_main_summary(RAW_AGG_DATA, season=CURRENT_SEASON)
 
-PATCH_NAMES = {
-    "bfa4": "BFA Season 4 / 8.3",
-    "bfa4_postpatch": "BFA post-patch / 9.0.1",
-    "SL1": "SL Season 1 / 9.0.2",
-}
 ridgeplot_fig = generate_ridgeplot(spec_runs, PATCH_NAMES[CURRENT_SEASON])
 bubble_fig = make_bubble_plot(spec_runs, PATCH_NAMES[CURRENT_SEASON])
 histogram_fig = generate_run_histogram(spec_runs, PATCH_NAMES[CURRENT_SEASON])
@@ -128,7 +149,7 @@ stacked_week_fig = generate_stack_figure(
     week_summary, "week", "mdps", "bar", PATCH_NAMES[CURRENT_SEASON]
 )
 meta_barchart = generate_meta_index_barchart(
-    RAW_AGG_DATA, CURRENT_SEASON, boundary=[0, 14, 15, 30]
+    RAW_AGG_DATA, CURRENT_SEASON, boundary=[0, 14, 15, 30], highlight="all"
 )
 
 
@@ -152,6 +173,9 @@ role_options = [
     {"label": "MELEE DPS", "value": "mdps"},
     {"label": "RANGE DPS", "value": "rdps"},
 ]
+
+role_options_with_all = [{"label": "ALL SPECS", "value": "all"}]
+role_options_with_all.extend(role_options)
 
 radio_options = [
     {"label": "Bar Chart", "value": "bar"},
@@ -551,12 +575,12 @@ app.layout = html.Div(
                 className="figure-header",
                 children=construct_figure_header(figure_header_elements["figure4"]),
             ),
+            html.P("Color specs on bar chart:"),
             dcc.Dropdown(
                 className="dropdown",
                 id="figure4-dropdown",
-                options=role_options,
-                placeholder="SELECT SPEC ROLE",
-                value="tank",
+                options=role_options_with_all,
+                value="all",
                 clearable=False,
             ),
             html.P("Population-level keys"),
@@ -588,11 +612,14 @@ app.layout = html.Div(
     [
         Input(component_id="population-slider", component_property="value"),
         Input(component_id="meta-slider", component_property="value"),
+        Input(component_id="figure4-dropdown", component_property="value"),
         Input(component_id="fig4-season-switch", component_property="value"),
     ],
     prevent_initial_call=True,
 )
-def update_figure4(population_slider: List[int], meta_slider: List[int], season: str):
+def update_figure4(
+    population_slider: List[int], meta_slider: List[int], spec_role: str, season: str
+) -> go.Figure:
     """Updates tier list figure based on slider inputs."""
     population_min, population_max = population_slider
     meta_min, meta_max = meta_slider
@@ -600,6 +627,7 @@ def update_figure4(population_slider: List[int], meta_slider: List[int], season:
         RAW_AGG_DATA,
         season,
         boundary=[population_min, population_max, meta_min, meta_max],
+        highlight=spec_role,
     )
     return meta_barchart
 

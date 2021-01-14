@@ -868,11 +868,6 @@ class MetaIndexBarChart:
         """
         self.data = data
         self.spec_role = spec_role
-        # this is a bit of a hack, we assume that
-        # 1/5 of all runs slots go to tanks
-        # 1/5 to healers
-        # 3/5 to dps --> we do not separate dps into melee and range
-        self.total_character_runs = self.data.run_count.sum()
 
     def create_figure(self, bounds: List[int]) -> go.Figure:
         """Creates horizontal bar figure for meta index.
@@ -898,6 +893,9 @@ class MetaIndexBarChart:
             y=list(range(len(spec_meta))),
             marker_color=[
                 "rgba(%d,%d,%d,0.9)" % spec_utils.get_color(spec_id)
+                if spec_utils.get_role(spec_id) == self.spec_role
+                or self.spec_role == "all"
+                else "rgba(1,1,1,0.4)"
                 for spec_id in spec_meta.index
             ],
             text=[
@@ -966,7 +964,6 @@ class MetaIndexBarChart:
                 textangle=90,
             )
             fig.add_annotation(annotation)
-
         return fig
 
     def _calculate_index(self, bounds: List[int]) -> pd.DataFrame:
