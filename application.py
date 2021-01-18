@@ -227,7 +227,6 @@ def construct_season_selector(id_, ishidden):
         ],
         value="SL1",
         clearable=False,
-        style={"width": "50%"},
     )
     if ishidden:
         dropdown.style = {"display": "none"}
@@ -449,21 +448,11 @@ app.layout = html.Div(
             style={"text-align": "right"},
         ),
         html.Div(
+            id="master-switch-wrapper",
             children=[
-                html.Div(
-                    dcc.Markdown(
-                        "#### SELECT SEASON",
-                    ),
-                    style={"float": "left", "margin-right": "10px"},
-                ),
-                html.Div(
-                    construct_season_selector(
-                        id_="master-season-switch", ishidden=False
-                    ),
-                    style={"float": "right", "margin-top": "15px"},
-                ),
+                html.H4("SELECT SEASON"),
+                construct_season_selector(id_="master-season-switch", ishidden=False),
             ],
-            style={"display": "inline-block"},
         ),
         html.Hr(),
         html.Div(

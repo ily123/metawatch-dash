@@ -89,11 +89,9 @@ html {
 .figure {
     padding-left: 30px;
 }
-
 .dropdown {
-    width: 400px;
+    width: 250px;
 }
-
 /* Control color of the dropdown menu background */
 .Select-control {
   background-color: lightgray !important;
@@ -102,6 +100,20 @@ html {
 .Select-menu-outer {
   background-color: lightgray;
   border: 1px solid black;
+}
+
+/* Format master season switch */
+#master-switch-wrapper {
+    display: flex;
+    margin: 0 auto;
+    justify-content: center;
+}
+#master-switch-wrapper H4 {
+    padding-right: 10px;
+}
+#master-switch-wrapper .dropdown {
+    margin-top: 15px;
+    width: 200px;
 }
 
 h4 {
