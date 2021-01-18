@@ -1,3 +1,65 @@
+@font-face { font-family: LogoFont; src: url('ka1.ttf');}
+header {
+    font-family: LogoFont;
+    background-color: #E3C092;
+    height: 70px;
+    overflow: hidden;
+    padding-left: 14px;
+    font-size: 20px;
+    /* 3 lines below are to center text vertically */
+    display: flex;
+    justify-content: left;
+    align-items: center;
+}
+
+nav {
+    background-color: #333;
+    overflow: hidden;
+}
+
+nav a {
+    color: white;
+    text-align: right;
+    padding: 14px 16px;
+    font-size: 17px;
+    text-decoration: none;
+    float: left;
+}
+
+nav a:hover {
+    background-color: #E3C092;
+    color: black;
+}
+
+nav a:active {
+    /* This does nothing, but keeping it to see if I can do something later */
+    background-color: #E3C092;
+    color: black;
+}
+
+body {
+    background-color: lightgray;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+footer {
+    width: 100%;
+    bottom: 0;
+    background-color: #333;
+    height: 40px;
+    /* 3 lines below are to center text vertically */
+    display: flex;
+    justify-content: center;
+}
+footer p{
+    font-size: 20px;
+    color: white;
+    padding-top: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+/*
 html {
     font-size: 12pt;
     font-family: Arial;
@@ -8,16 +70,7 @@ html {
     background-image: url("pixel_weave.png");
     background-repeat: repeat;
 }
-
-
-/*  I don't understand the margin interactions.
- *  If you dont include the body margin below,
- *  there is a gap between "html" and wrapper divs.
- */
-body {
-    margin: auto;
-}
-
+/
 #wrapper {
     background-color: white;
     border-left: gray solid;
@@ -28,6 +81,7 @@ body {
     padding-top: 35px;
     padding-bottom: 35px;
 }
+*/
 .figure-header {
     margin-bottom: 20px;
 }
@@ -38,6 +92,16 @@ body {
 
 .dropdown {
     width: 400px;
+}
+
+/* Control color of the dropdown menu background */
+.Select-control {
+  background-color: lightgray !important;
+  border: 1px solid black;
+}
+.Select-menu-outer {
+  background-color: lightgray;
+  border: 1px solid black;
 }
 
 h4 {
