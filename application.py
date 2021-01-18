@@ -454,139 +454,146 @@ app.layout = html.Div(
                 construct_season_selector(id_="master-season-switch", ishidden=False),
             ],
         ),
-        html.Hr(),
-        html.Div(
-            className="figure-header",
-            children=construct_figure_header(figure_header_elements["figure1"]),
-        ),
-        dcc.Tabs(
+        html.Main(
             children=[
-                dcc.Tab(
-                    label="RUNS BY SPEC & KEY LEVEL",
-                    children=[
-                        construct_season_selector(
-                            id_="fig1-ridgeplot-season-switch", ishidden=True
-                        ),
-                        dcc.Graph(
-                            className="figure",
-                            id="fig1-ridgeplot",
-                            figure=ridgeplot_fig,
-                            config=fig_config,
-                            # add margin here to compensate for title squish
-                            style={"margin-top": "20px"},
-                        ),
-                    ],
+                html.Div(
+                    className="figure-header",
+                    children=construct_figure_header(figure_header_elements["figure1"]),
                 ),
-                dcc.Tab(
-                    label="RUNS BY SPEC",
+                dcc.Tabs(
                     children=[
-                        construct_season_selector(
-                            id_="fig1-bubble-season-switch", ishidden=True
+                        dcc.Tab(
+                            label="RUNS BY SPEC & KEY LEVEL",
+                            children=[
+                                construct_season_selector(
+                                    id_="fig1-ridgeplot-season-switch", ishidden=True
+                                ),
+                                dcc.Graph(
+                                    className="figure",
+                                    id="fig1-ridgeplot",
+                                    figure=ridgeplot_fig,
+                                    config=fig_config,
+                                    # add margin here to compensate for title squish
+                                    style={"margin-top": "20px"},
+                                ),
+                            ],
                         ),
-                        dcc.Graph(
-                            className="figure",
-                            id="fig1-bubble-chart",
-                            figure=bubble_fig,
-                            config=fig_config,
+                        dcc.Tab(
+                            label="RUNS BY SPEC",
+                            children=[
+                                construct_season_selector(
+                                    id_="fig1-bubble-season-switch", ishidden=True
+                                ),
+                                dcc.Graph(
+                                    className="figure",
+                                    id="fig1-bubble-chart",
+                                    figure=bubble_fig,
+                                    config=fig_config,
+                                ),
+                            ],
                         ),
-                    ],
+                        dcc.Tab(
+                            label="RUNS BY KEY LEVEL",
+                            children=[
+                                construct_season_selector(
+                                    id_="fig1-key-hist-season-switch", ishidden=True
+                                ),
+                                dcc.Graph(
+                                    className="figure",
+                                    id="fig1-key-hist",
+                                    figure=histogram_fig,
+                                    config=fig_config,
+                                ),
+                            ],
+                        ),
+                    ]
                 ),
-                dcc.Tab(
-                    label="RUNS BY KEY LEVEL",
-                    children=[
-                        construct_season_selector(
-                            id_="fig1-key-hist-season-switch", ishidden=True
-                        ),
-                        dcc.Graph(
-                            className="figure",
-                            id="fig1-key-hist",
-                            figure=histogram_fig,
-                            config=fig_config,
-                        ),
-                    ],
+                html.Hr(),
+                html.Div(
+                    className="figure-header",
+                    children=construct_figure_header(figure_header_elements["figure2"]),
                 ),
+                construct_season_selector(id_="fig2-season-switch", ishidden=True),
+                dcc.RadioItems(
+                    id="figure2-radio",
+                    options=radio_options,
+                    value="bar",
+                ),
+                dcc.Dropdown(
+                    className="dropdown",
+                    id="figure2-dropdown",
+                    options=role_options,
+                    value="tank",
+                    clearable=False,
+                ),
+                dcc.Graph(
+                    id="keylevel-stacked-fig",
+                    figure=stacked_levels_fig,
+                    config=fig_config,
+                ),
+                html.Hr(),
+                html.Div(
+                    className="figure-header",
+                    children=construct_figure_header(figure_header_elements["figure3"]),
+                ),
+                construct_season_selector(id_="fig3-season-switch", ishidden=True),
+                dcc.RadioItems(
+                    id="figure3-radio",
+                    options=radio_options,
+                    value="bar",
+                ),
+                dcc.Dropdown(
+                    className="dropdown",
+                    id="figure3-dropdown",
+                    options=role_options,
+                    placeholder="SELECT SPEC ROLE",
+                    value="tank",
+                    clearable=False,
+                ),
+                dcc.Graph(
+                    id="week-stacked-fig", figure=stacked_week_fig, config=fig_config
+                ),
+                html.Hr(),
+                construct_season_selector(id_="fig4-season-switch", ishidden=True),
+                html.Div(
+                    className="figure-header",
+                    children=construct_figure_header(figure_header_elements["figure4"]),
+                ),
+                html.P("Color specs on bar chart:"),
+                dcc.Dropdown(
+                    className="dropdown",
+                    id="figure4-dropdown",
+                    options=role_options_with_all,
+                    value="all",
+                    clearable=False,
+                ),
+                html.P("Population-level keys"),
+                html.Div(
+                    id="population-slider-wrapper",
+                    children=construct_slider(
+                        id_="population-slider",
+                        range_max=RAW_AGG_DATA.loc[
+                            RAW_AGG_DATA.season == CURRENT_SEASON, "level"
+                        ].max(),
+                        selected_range=[2, 15],
+                    ),
+                ),
+                html.P("Meta-level keys"),
+                html.Div(
+                    id="meta-slider-wrapper",
+                    children=construct_slider(
+                        id_="meta-slider",
+                        range_max=RAW_AGG_DATA.loc[
+                            RAW_AGG_DATA.season == CURRENT_SEASON, "level"
+                        ].max(),
+                        selected_range=[16, 99],  # select it to the end
+                    ),
+                ),
+                dcc.Graph(id="meta-index-fig", figure=meta_barchart, config=fig_config),
+                html.Hr(),
+                html.Div(id="faq", children=errata_and_faq),
             ]
         ),
-        html.Hr(),
-        html.Div(
-            className="figure-header",
-            children=construct_figure_header(figure_header_elements["figure2"]),
-        ),
-        construct_season_selector(id_="fig2-season-switch", ishidden=True),
-        dcc.RadioItems(
-            id="figure2-radio",
-            options=radio_options,
-            value="bar",
-        ),
-        dcc.Dropdown(
-            className="dropdown",
-            id="figure2-dropdown",
-            options=role_options,
-            value="tank",
-            clearable=False,
-        ),
-        dcc.Graph(
-            id="keylevel-stacked-fig", figure=stacked_levels_fig, config=fig_config
-        ),
-        html.Hr(),
-        html.Div(
-            className="figure-header",
-            children=construct_figure_header(figure_header_elements["figure3"]),
-        ),
-        construct_season_selector(id_="fig3-season-switch", ishidden=True),
-        dcc.RadioItems(
-            id="figure3-radio",
-            options=radio_options,
-            value="bar",
-        ),
-        dcc.Dropdown(
-            className="dropdown",
-            id="figure3-dropdown",
-            options=role_options,
-            placeholder="SELECT SPEC ROLE",
-            value="tank",
-            clearable=False,
-        ),
-        dcc.Graph(id="week-stacked-fig", figure=stacked_week_fig, config=fig_config),
-        html.Hr(),
-        construct_season_selector(id_="fig4-season-switch", ishidden=True),
-        html.Div(
-            className="figure-header",
-            children=construct_figure_header(figure_header_elements["figure4"]),
-        ),
-        html.P("Color specs on bar chart:"),
-        dcc.Dropdown(
-            className="dropdown",
-            id="figure4-dropdown",
-            options=role_options_with_all,
-            value="all",
-            clearable=False,
-        ),
-        html.P("Population-level keys"),
-        html.Div(
-            id="population-slider-wrapper",
-            children=construct_slider(
-                id_="population-slider",
-                range_max=RAW_AGG_DATA.loc[
-                    RAW_AGG_DATA.season == CURRENT_SEASON, "level"
-                ].max(),
-                selected_range=[2, 15],
-            ),
-        ),
-        html.P("Meta-level keys"),
-        html.Div(
-            id="meta-slider-wrapper",
-            children=construct_slider(
-                id_="meta-slider",
-                range_max=RAW_AGG_DATA.loc[
-                    RAW_AGG_DATA.season == CURRENT_SEASON, "level"
-                ].max(),
-                selected_range=[16, 99],  # select it to the end
-            ),
-        ),
-        dcc.Graph(id="meta-index-fig", figure=meta_barchart, config=fig_config),
-        html.Hr(),
-        html.Div(id="faq", children=errata_and_faq),
         html.Footer(
             children=[
                 html.P("Created by Uni in 2020 @"),
