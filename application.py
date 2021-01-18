@@ -157,23 +157,6 @@ data_last_updated = datetime.datetime.fromtimestamp(
     int(os.path.getmtime(db_file_path))
 ).strftime("%Y-%m-%d")
 
-figure_list = html.Ul(
-    children=[
-        html.Li(html.A("Overview of all keys completed this season", href="#figure1")),
-        html.Li(html.A("Detailed look at spec performance", href="#figure2")),
-        html.Li(html.A("Weekly top 500", href="#figure3")),
-        html.Li(
-            html.A(
-                children=html.P(
-                    "Spec tier list (new)",
-                    style={"color": "red", "font-weight": "bold"},
-                ),
-                href="#figure4",
-            )
-        ),
-        html.Li(html.A("FAQ", href="#faq")),
-    ]
-)
 
 role_options = [
     {"label": "TANK", "value": "tank"},
@@ -454,11 +437,13 @@ app.layout = html.Div(
         html.Header(html.H1("BENCHED.me")),
         html.Nav(
             [
-                html.A("Spec Stats", href="/"),
-                html.A("Comp Browser [coming soon]", href="/"),
+                html.A("OVERVIEW", href="#figure1"),
+                html.A("SPEC PERFORMANCE", href="#figure2"),
+                html.A("WEEKLY TOP 500", href="#figure3"),
+                html.A("TIER LIST", href="#figure4"),
+                html.A("FAQ", href="#faq"),
             ]
         ),
-        figure_list,
         html.P(
             "Data updated: %s" % data_last_updated,
             style={"text-align": "right"},
