@@ -1,7 +1,7 @@
 @font-face { font-family: LogoFont; src: url('ka1.ttf');}
 header {
     font-family: LogoFont;
-    background-color: #E3C092;
+    background-color: #C8C8DB; /* alternative - #E3C092 */
     height: 70px;
     overflow: hidden;
     padding-left: 14px;
@@ -27,13 +27,13 @@ nav a {
 }
 
 nav a:hover {
-    background-color: #E3C092;
+    background-color: #C8C8DB;
     color: black;
 }
 
 nav a:active {
     /* This does nothing, but keeping it to see if I can do something later */
-    background-color: #E3C092;
+    background-color: #C8C8DB;
     color: black;
 }
 
@@ -61,14 +61,14 @@ body {
 }
 
 main {
-    margin-left: 50px;
-    margin-right: 50px;
+    margin-left: 10%;
+    margin-right: 10%;
     margin-top: 20px;
     padding-left: 50px;
     padding-right: 50px;
     padding-top: 30px;
-
     border: 1px black solid;
+    background-color: white;
 }
 /*
 html {
@@ -103,13 +103,14 @@ html {
 .dropdown {
     width: 250px;
 }
+
 /* Control color of the dropdown menu background */
-.Select-control {
-  background-color: lightgray !important;
+#master-switch-wrapper .Select-control {
+  background-color: white !important;
   border: 1px solid black;
 }
-.Select-menu-outer {
-  background-color: lightgray;
+#master-switch-wrapper .Select-menu-outer {
+  background-color: white;
   border: 1px solid black;
 }
 
