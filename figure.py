@@ -609,7 +609,6 @@ class BubblePlot:
         marker_size = self.calibrate_reference_marker_size()
         # convert raw market size into relative size
         largest_data_bubble = self.data.iloc[0]
-        print(largest_data_bubble)
         marker_size = [1500 * ms / largest_data_bubble for ms in marker_size]
         data = go.Scatter(
             x=[9, 9, 9],
@@ -988,7 +987,6 @@ class MetaIndexBarChart:
         spec_meta_index = meta_spec_pct / population_spec_pct
         spec_meta_index.columns = ["spec_meta_index"]
         spec_meta_index.fillna(0, inplace=True)
-        print(spec_meta_index)
         return spec_meta_index
 
     def _calc_spec_pct_in_bin(self, lower_bound: int, upper_bound: int) -> pd.DataFrame:
