@@ -647,9 +647,6 @@ class BubblePlot:
             annotations.append(annotation)
         return annotations
 
-    def get_ref_size(self):
-        """Fits size of reference bubbles to data."""
-
     def make_anno(self):
         annotations = []
         position_x = 0
