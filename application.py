@@ -406,9 +406,6 @@ errata_and_faq = dcc.Markdown(  # &nbsp; is a hacky way to add a blank line to M
      Drop me a note whenever :)
 
     &nbsp;
-
-    -----
-    This website does not use cookies or sell your data.
     """
 )
 
@@ -596,7 +593,7 @@ app.layout = html.Div(
         ),
         html.Footer(
             children=[
-                html.P("Created by Uni in 2020 @"),
+                html.P("Created by Uni in 2020"),
                 html.P("Discord"),
                 html.P("Patreon"),
             ]

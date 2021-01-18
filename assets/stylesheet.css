@@ -61,12 +61,14 @@ body {
 }
 
 main {
-    margin-left: 10%;
-    margin-right: 10%;
+    margin-right: auto;
+    margin-left: auto;
     margin-top: 20px;
+    margin-bottom: 10px;
     padding-left: 50px;
     padding-right: 50px;
     padding-top: 30px;
+    max-width: 1000px;
     border: 1px black solid;
     background-color: white;
 }
