@@ -201,7 +201,7 @@ class RidgePlot:
             x=position_x,
             y=position_y,
             text=text,
-            font=dict(color="black", size=15, family="Monaco, regular"),
+            font=dict(color="black", size=15, family="MonacoRegular"),
             showarrow=False,
             xanchor="right",
             yanchor="bottom",
@@ -232,7 +232,7 @@ class RidgePlot:
             x=position_x,
             y=position_y,
             text=text,
-            font=dict(color="black", size=15, family="Monaco, regular"),
+            font=dict(color="black", size=15, family="MonacoRegular"),
             align="center",
             showarrow=True,
             ax=0,
@@ -642,7 +642,7 @@ class BubblePlot:
                 xanchor="left",
                 yanchor="middle",
                 borderpad=0,
-                font=dict(color="black", size=15, family="Monaco, regular"),
+                font=dict(color="black", size=15, family="MonacoRegular"),
             )
             annotations.append(annotation)
         return annotations
@@ -656,7 +656,7 @@ class BubblePlot:
                 x=position_x,
                 y=position_y,
                 text=spec_role.upper(),
-                font=dict(color="black", size=15, family="Monaco, regular"),
+                font=dict(color="black", size=15, family="MonacoRegular"),
                 showarrow=False,
                 xanchor="right",
                 yanchor="middle",
@@ -956,7 +956,7 @@ class MetaIndexBarChart:
                 xanchor="left",
                 yanchor="middle",
                 borderpad=0,
-                font=dict(color="black", size=50, family="Monaco, regular"),
+                font=dict(color="black", size=50, family="MonacoRegular"),
                 opacity=0.7,
                 textangle=90,
             )

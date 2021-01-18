@@ -1,4 +1,5 @@
 @font-face { font-family: LogoFont; src: url('ka1.ttf');}
+@font-face { font-family: MonacoRegular; src: url("Monaco_Regular.ttf");}
 header {
     font-family: LogoFont;
     background-color: #C8C8DB; /* alternative - #E3C092 */
