@@ -3,3 +3,4 @@ __pycache__/
 *.swp
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
+scratch.py

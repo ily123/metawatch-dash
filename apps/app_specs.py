@@ -1,7 +1,11 @@
 import dash_core_components as dcc
 import dash_html_components as html
+import dataserver
 from app import app
 from dash.dependencies import Input, Output
+
+DB_FILE_PATH = "data/summary.sqlite"
+dataserver_ = dataserver.DataServer(DB_FILE_PATH)
 
 layout = html.Div(
     [
@@ -23,4 +27,4 @@ layout = html.Div(
     Output("app-specs-display-value", "children"), Input("app-specs-dropdown", "value")
 )
 def display_value1(value):
-    return 'You have selected "{}"'.format(value)
+    return 'You have selected SPECS "{}"'.format(id(dataserver_))

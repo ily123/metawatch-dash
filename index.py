@@ -8,9 +8,9 @@ from dash.dependencies import Input, Output
 from app import app
 from apps import app_comps, app_specs
 
-db_file_path = "data/summary.sqlite"
+DB_FILE_PATH = "data/summary.sqlite"
 data_last_updated = datetime.datetime.fromtimestamp(
-    int(os.path.getmtime(db_file_path))
+    int(os.path.getmtime(DB_FILE_PATH))
 ).strftime("%Y-%m-%d")
 
 app.layout = html.Div(
@@ -43,7 +43,8 @@ app.layout = html.Div(
 
 
 @app.callback(Output("page-content", "children"), Input("url", "pathname"))
-def display_page(pathname):
+def display_page(pathname: str) -> html.Div:
+    """Returns main content of the page."""
     if pathname == "/comps":
         return app_comps.layout
     elif pathname == "/":
