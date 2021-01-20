@@ -1,5 +1,7 @@
 """Container for Blizzard class colors."""
 
+from typing import List
+
 
 class ClassColors:
     def __init__(self):
@@ -36,7 +38,7 @@ class Specs:
         """Init of list of dict, where each dict is a spec."""
         class_colors = ClassColors()
         self.specs = []
-        for row in self.get_specs():
+        for index, row in enumerate(self.get_specs()):
             spec = dict(
                 class_name=row[0],
                 class_id=row[1],
@@ -45,6 +47,7 @@ class Specs:
                 role=row[4],
                 token=row[5],
                 color=class_colors.get_rbg(row[0]),
+                index=index,
             )
             self.specs.append(spec)
 
@@ -89,46 +92,68 @@ class Specs:
                 role_specs.append(spec["spec_id"])
         return role_specs
 
+    def vectorize_comp_token(self, token: str) -> List[int]:
+        """Converts comp token to vector representation.
+
+        Parameter
+        ---------
+        token : str
+            string of characters a-zA-K where each char
+            corresponds to a player spec
+
+        Returns
+        -------
+        vector : list[int]
+            vector encoding of the spec frequencies in the token
+        """
+        specs = self.get_specs()
+        spec_index = dict(zip([spec[-1] for spec in specs], range(len(specs))))
+        vector = [0] * len(specs)
+        for spec_char in token:
+            index = spec_index[spec_char]
+            vector[index] += 1
+        return vector
+
     @staticmethod
     def get_specs():
         """Returns nested list of spec meta data."""
-        # yapf: disable
+        # fmt: off
         return [
-            ['death knight', 6, 'blood', 250, 'tank', 'death_knight_blood'],
-            ['death knight', 6, 'frost', 251, 'mdps', 'death_knight_frost'],
-            ['death knight', 6, 'unholy', 252, 'mdps', 'death_knight_unholy'],
-            ['demon hunter', 12, 'havoc', 577, 'mdps', 'demon_hunter_havoc'],
-            ['demon hunter', 12, 'vengeance', 581, 'tank', 'demon_hunter_vengeance'],
-            ['druid', 11, 'balance', 102, 'rdps', 'druid_balance'],
-            ['druid', 11, 'feral', 103, 'mdps', 'druid_feral'],
-            ['druid', 11, 'guardian', 104, 'tank', 'druid_guardian'],
-            ['druid', 11, 'restoration', 105, 'healer', 'druid_restoration'],
-            ['hunter', 3, 'beast mastery', 253, 'rdps', 'hunter_beast_mastery'],
-            ['hunter', 3, 'marksmanship', 254, 'rdps', 'hunter_marksmanship'],
-            ['hunter', 3, 'survival', 255, 'mdps', 'hunter_survival'],
-            ['mage', 8, 'arcane', 62, 'rdps', 'mage_arcane'],
-            ['mage', 8, 'fire', 63, 'rdps', 'mage_fire'],
-            ['mage', 8, 'frost', 64, 'rdps', 'mage_frost'],
-            ['monk', 10, 'brewmaster', 268, 'tank', 'monk_brewmaster'],
-            ['monk', 10, 'mistweaver', 270, 'healer', 'monk_mistweaver'],
-            ['monk', 10, 'windwalker', 269, 'mdps', 'monk_windwalker'],
-            ['paladin', 2, 'holy', 65, 'healer', 'paladin_holy'],
-            ['paladin', 2, 'protection', 66, 'tank', 'paladin_protection'],
-            ['paladin', 2, 'retribution', 70, 'mdps', 'paladin_retribution'],
-            ['priest', 5, 'discipline', 256, 'healer', 'priest_discipline'],
-            ['priest', 5, 'holy', 257, 'healer', 'priest_holy'],
-            ['priest', 5, 'shadow', 258, 'rdps', 'priest_shadow'],
-            ['rogue', 4, 'assassination', 259, 'mdps', 'rogue_assassination'],
-            ['rogue', 4, 'outlaw', 260, 'mdps', 'rogue_outlaw'],
-            ['rogue', 4, 'subtlety', 261, 'mdps', 'rogue_subtlety'],
-            ['shaman', 7, 'elemental', 262, 'rdps', 'shaman_elemental'],
-            ['shaman', 7, 'enhancement', 263, 'mdps', 'shaman_enhancement'],
-            ['shaman', 7, 'restoration', 264, 'healer', 'shaman_restoration'],
-            ['warlock', 9, 'affliction', 265, 'rdps', 'warlock_affliction'],
-            ['warlock', 9, 'demonology', 266, 'rdps', 'warlock_demonology'],
-            ['warlock', 9, 'destruction', 267, 'rdps', 'warlock_destruction'],
-            ['warrior', 1, 'arms', 71, 'mdps', 'warrior_arms'],
-            ['warrior', 1, 'fury', 72, 'mdps', 'warrior_fury'],
-            ['warrior', 1, 'protection', 73, 'tank', 'warrior_protection']
+            ['death knight', 6, 'blood', 250, 'tank', 'death_knight_blood', 'a'],
+            ['death knight', 6, 'frost', 251, 'mdps', 'death_knight_frost', 'b'],
+            ['death knight', 6, 'unholy', 252, 'mdps', 'death_knight_unholy', 'c'],
+            ['demon hunter', 12, 'havoc', 577, 'mdps', 'demon_hunter_havoc', 'd'],
+            ['demon hunter', 12, 'vengeance', 581, 'tank', 'demon_hunter_vengeance', 'e'],
+            ['druid', 11, 'balance', 102, 'rdps', 'druid_balance', 'f'],
+            ['druid', 11, 'feral', 103, 'mdps', 'druid_feral', 'g'],
+            ['druid', 11, 'guardian', 104, 'tank', 'druid_guardian', 'h'],
+            ['druid', 11, 'restoration', 105, 'healer', 'druid_restoration', 'i'],
+            ['hunter', 3, 'beast mastery', 253, 'rdps', 'hunter_beast_mastery', 'j'],
+            ['hunter', 3, 'marksmanship', 254, 'rdps', 'hunter_marksmanship', 'k'],
+            ['hunter', 3, 'survival', 255, 'mdps', 'hunter_survival', 'l'],
+            ['mage', 8, 'arcane', 62, 'rdps', 'mage_arcane', 'm'],
+            ['mage', 8, 'fire', 63, 'rdps', 'mage_fire', 'n'],
+            ['mage', 8, 'frost', 64, 'rdps', 'mage_frost', 'o'],
+            ['monk', 10, 'brewmaster', 268, 'tank', 'monk_brewmaster', 'p'],
+            ['monk', 10, 'mistweaver', 270, 'healer', 'monk_mistweaver', 'q'],
+            ['monk', 10, 'windwalker', 269, 'mdps', 'monk_windwalker', 'r'],
+            ['paladin', 2, 'holy', 65, 'healer', 'paladin_holy', 's'],
+            ['paladin', 2, 'protection', 66, 'tank', 'paladin_protection', 't'],
+            ['paladin', 2, 'retribution', 70, 'mdps', 'paladin_retribution', 'u'],
+            ['priest', 5, 'discipline', 256, 'healer', 'priest_discipline', 'v'],
+            ['priest', 5, 'holy', 257, 'healer', 'priest_holy', 'w'],
+            ['priest', 5, 'shadow', 258, 'rdps', 'priest_shadow', 'x'],
+            ['rogue', 4, 'assassination', 259, 'mdps', 'rogue_assassination', 'y'],
+            ['rogue', 4, 'outlaw', 260, 'mdps', 'rogue_outlaw', 'z'],
+            ['rogue', 4, 'subtlety', 261, 'mdps', 'rogue_subtlety', 'A'],
+            ['shaman', 7, 'elemental', 262, 'rdps', 'shaman_elemental', 'B'],
+            ['shaman', 7, 'enhancement', 263, 'mdps', 'shaman_enhancement', 'C'],
+            ['shaman', 7, 'restoration', 264, 'healer', 'shaman_restoration', 'D'],
+            ['warlock', 9, 'affliction', 265, 'rdps', 'warlock_affliction', 'F'],
+            ['warlock', 9, 'demonology', 266, 'rdps', 'warlock_demonology', 'G'],
+            ['warlock', 9, 'destruction', 267, 'rdps', 'warlock_destruction', 'H'],
+            ['warrior', 1, 'arms', 71, 'mdps', 'warrior_arms', 'I'],
+            ['warrior', 1, 'fury', 72, 'mdps', 'warrior_fury', 'J'],
+            ['warrior', 1, 'protection', 73, 'tank', 'warrior_protection', 'K']
         ]
-        # yapf: enable
+        # fmt: on
