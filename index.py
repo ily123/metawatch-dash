@@ -1,3 +1,6 @@
+import datetime
+import os
+
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
@@ -5,8 +8,37 @@ from dash.dependencies import Input, Output
 from app import app
 from apps import app_comps, app_specs
 
+db_file_path = "data/summary.sqlite"
+data_last_updated = datetime.datetime.fromtimestamp(
+    int(os.path.getmtime(db_file_path))
+).strftime("%Y-%m-%d")
+
 app.layout = html.Div(
-    [dcc.Location(id="url", refresh=False), html.Div(id="page-content")]
+    [
+        dcc.Location(id="url", refresh=False),
+        html.Header(html.H1("BENCHED.me")),
+        html.Nav(
+            [
+                html.A("OVERVIEW", href="#figure1"),
+                html.A("SPEC PERFORMANCE", href="#figure2"),
+                html.A("WEEKLY TOP 500", href="#figure3"),
+                html.A("TIER LIST", href="#figure4"),
+                html.A("FAQ", href="#faq"),
+            ]
+        ),
+        html.P(
+            "Data updated: %s" % data_last_updated,
+            style={"text-align": "right"},
+        ),
+        html.Main(id="page-content"),
+        html.Footer(
+            children=[
+                html.P("Created by Uni in 2020"),
+                html.P("Discord"),
+                html.P("Patreon"),
+            ]
+        ),
+    ]
 )
 
 
