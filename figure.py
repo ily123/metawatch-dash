@@ -464,7 +464,7 @@ class BasicHistogram:
     def make_figure(self):
         """Draws plotly histogram."""
         key_level = list(self.data.index)
-        runs = list(self.data.values)
+        runs = list(self.data.run_count.values)
         total_runs = sum(runs)
         percentile_rank = 100 * self.data.cumsum() / total_runs
         custom_text = [

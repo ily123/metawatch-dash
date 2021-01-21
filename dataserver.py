@@ -57,11 +57,29 @@ class DataServer:
         )
         return data
 
-        # week_summary = pd.pivot_table(
-        #    week_summary,
-        #    values="run_count",
-        #    index="spec",
-        #    columns="period",
-        #    fill_value=0,
-        # )
-        # return main_summary, week_summary
+    def get_data_for_run_histogram(self, season: str) -> pd.DataFrame:
+        """Returns key counts vs level for histogram on panel 3.
+
+        Returns
+        -------
+        run_per_level : pd.DataFrame
+            index is key level, column is run count
+        """
+        data = self.raw_data["specs"]
+        run_per_level = (
+            data.loc[data["season"] == season, ["level", "run_count"]]
+            .groupby("level")
+            .sum()
+        )
+        run_per_level = round(run_per_level / 5)  # there are 5 records per run
+        run_per_level = run_per_level.astype(int)
+        return run_per_level
+
+    # week_summary = pd.pivot_table(
+    #    week_summary,
+    #    values="run_count",
+    #    index="spec",
+    #    columns="period",
+    #    fill_value=0,
+    # )
+    # return main_summary, week_summary

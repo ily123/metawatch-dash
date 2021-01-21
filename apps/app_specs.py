@@ -169,6 +169,32 @@ layout = html.Div(
                         ),
                     ],
                 ),
+                dcc.Tab(
+                    label="RUNS BY SPEC",
+                    children=[
+                        constructor.season_dropdown(
+                            id_="fig1-bubble-season-switch", ishidden=True
+                        ),
+                        dcc.Graph(
+                            className="figure",
+                            id="fig1-bubble-chart",
+                            config=fig_config,
+                        ),
+                    ],
+                ),
+                dcc.Tab(
+                    label="RUNS BY KEY LEVEL",
+                    children=[
+                        constructor.season_dropdown(
+                            id_="fig1-key-hist-season-switch", ishidden=True
+                        ),
+                        dcc.Graph(
+                            className="figure",
+                            id="fig1-key-hist",
+                            config=fig_config,
+                        ),
+                    ],
+                ),
             ]
         ),
         # ============
@@ -195,23 +221,25 @@ def hide_figure(fig):
 
 
 @app.callback(
-    Output(component_id="fig1-ridgeplot", component_property="figure"),
-    # Will fill in these as I refactor
-    #        Output(component_id="fig1-bubble-chart", component_property="figure"),
-    #        Output(component_id="fig1-key-hist", component_property="figure"),
+    [
+        Output(component_id="fig1-ridgeplot", component_property="figure"),
+        Output(component_id="fig1-bubble-chart", component_property="figure"),
+        Output(component_id="fig1-key-hist", component_property="figure"),
+    ],
     Input(component_id="fig1-ridgeplot-season-switch", component_property="value"),
     # prevent_initial_call=False,
 )
 def update_figure1(season):
     """Updates the 3 panels of figure 1 based on season."""
     patch_name = PATCH_NAMES[season]
-    spec_runs = dataserver_.get_data_for_ridgeplot(season)
-    ridgeplot = figure.RidgePlot(spec_runs, patch_name)
-    # bubble_chart = make_bubble_plot(spec_runs, patch_name)
-    # histogram = generate_run_histogram(spec_runs, patch_name)
-    # stacked_levels = generate_stack_figure(spec_runs, "key", "mdps", "bar")
-    # return [ridgeplot, bubble_chart, histogram]
-    return ridgeplot.figure
+    # ridge plot and bubble plot (panel 1 and 2)
+    runs_per_spec_and_level = dataserver_.get_data_for_ridgeplot(season)
+    ridgeplot = figure.RidgePlot(runs_per_spec_and_level, patch_name)
+    bubble = figure.BubblePlot(runs_per_spec_and_level, patch_name)
+    # histogram (panel 3)
+    runs_per_level = dataserver_.get_data_for_run_histogram(season)
+    hist = figure.BasicHistogram(runs_per_level, patch_name)
+    return ridgeplot.figure, bubble.make_figure2(), hist.make_figure()
 
 
 @app.callback(
