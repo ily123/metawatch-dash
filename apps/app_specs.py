@@ -1,16 +1,18 @@
-from typing import List
+from typing import List, Tuple
 
 import constructor
 import dash_core_components as dcc
 import dash_html_components as html
 import dataserver
 import figure
+import plotly.graph_objects as go
 from app import app
 from dash.dependencies import Input, Output
 
 DB_FILE_PATH = "data/summary.sqlite"
 dataserver_ = dataserver.DataServer(DB_FILE_PATH)
 
+CURRENT_SEASON = "bfa4"
 PATCH_NAMES = {
     "bfa4": "BFA Season 4 / 8.3",
     "bfa4_postpatch": "BFA post-patch / 9.0.1",
@@ -157,16 +159,13 @@ layout = html.Div(
                     label="RUNS BY SPEC & KEY LEVEL",
                     children=[
                         constructor.season_dropdown(
-                            id_="fig1-ridgeplot-season-switch", ishidden=False
+                            id_="fig1-ridgeplot-season-switch",
+                            ishidden=True,
                         ),
                         dcc.Graph(
                             className="figure",
                             id="fig1-ridgeplot",
-                            # Leaving line below as reminder that dcc.Graph
-                            # has an empty figure component
-                            # figure=None,
                             config=fig_config,
-                            # add margin here to compensate for title squish
                             style={"margin-top": "20px", "display": "none"},
                         ),
                     ],
@@ -223,6 +222,34 @@ layout = html.Div(
         constructor.spec_dropdown(id_="figure3-dropdown"),
         dcc.Graph(id="week-stacked-fig", config=fig_config),
         html.Hr(),
+        constructor.season_dropdown(id_="fig4-season-switch", ishidden=True),
+        html.Div(
+            className="figure-header",
+            children=constructor.figure_header_ensemble(
+                figure_header_elements["figure4"]
+            ),
+        ),
+        html.P("Color specs on bar chart:"),
+        constructor.spec_dropdown(id_="figure4-dropdown", include_all=True),
+        html.P("Population-level keys"),
+        html.Div(
+            id="population-slider-wrapper",
+            children=constructor.key_level_slider(
+                id_="population-slider",
+                range_max=dataserver_.get_max_key_for_season(season=CURRENT_SEASON),
+                selected_range=[2, 15],
+            ),
+        ),
+        html.P("Meta-level keys"),
+        html.Div(
+            id="meta-slider-wrapper",
+            children=constructor.key_level_slider(
+                id_="meta-slider",
+                range_max=dataserver_.get_max_key_for_season(season=CURRENT_SEASON),
+                selected_range=[16, 99],  # select it to the end
+            ),
+        ),
+        dcc.Graph(id="meta-index-fig", config=fig_config),
         # ============
         html.H3("SPECS"),
         dcc.Dropdown(
@@ -300,6 +327,71 @@ def update_figure3(role, season):
     stack_figure = stack_figure.assemble_figure()
     stack_figure = constructor.annotate_weekly_figure(stack_figure)
     return stack_figure
+
+
+@app.callback(
+    Output(component_id="meta-index-fig", component_property="figure"),
+    [
+        Input(component_id="population-slider", component_property="value"),
+        Input(component_id="meta-slider", component_property="value"),
+        Input(component_id="figure4-dropdown", component_property="value"),
+        Input(component_id="fig4-season-switch", component_property="value"),
+    ],
+    prevent_initial_call=False,
+)
+def update_figure4(
+    population_slider: List[int], meta_slider: List[int], spec_role: str, season: str
+) -> go.Figure:
+    """Updates tier list figure based on slider inputs."""
+    population_min, population_max = population_slider
+    meta_min, meta_max = meta_slider
+    data = dataserver_.raw_data["specs"]
+    fig = figure.MetaIndexBarChart(
+        data=data[data["season"] == season],
+        spec_role=spec_role,
+    )
+    spec_meta_fig = fig.create_figure(
+        bounds=[population_min, population_max, meta_min, meta_max]
+    )
+    patch_name = PATCH_NAMES[season]
+    spec_meta_fig.update_layout(title_text="<b>SPEC TIER LIST (%s)</b>" % patch_name)
+    return spec_meta_fig
+
+
+@app.callback(
+    [
+        Output(component_id="population-slider-wrapper", component_property="children"),
+        Output(component_id="meta-slider-wrapper", component_property="children"),
+    ],
+    Input(component_id="master-season-switch", component_property="value"),
+    prevent_initial_call=True,
+)
+def update_slider_max_range(season: str) -> Tuple[dcc.RangeSlider]:
+    """Updates tier list sliders based on season selected in the master switch.
+
+    Parameters
+    ----------
+    season : str
+        season for which to plot the figure
+
+    Returns
+    --------
+    population_slider : dcc.RangeSlider
+        updated population slider
+    meta_slider : dcc.RangeSlider
+        updated meta slider
+    """
+    population_slider = constructor.key_level_slider(
+        id_="population-slider",
+        range_max=dataserver_.get_max_key_for_season(season=season),
+        selected_range=[2, 15],  # select it to the end
+    )
+    meta_slider = constructor.key_level_slider(
+        id_="meta-slider",
+        range_max=dataserver_.get_max_key_for_season(season=season),
+        selected_range=[16, 99],  # select it to the end
+    )
+    return population_slider, meta_slider
 
 
 @app.callback(

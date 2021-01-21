@@ -85,3 +85,9 @@ class DataServer:
             fill_value=0,
         )
         return data
+
+    def get_max_key_for_season(self, season) -> int:
+        """Returns max level of key completed in season."""
+        data = self.raw_data["specs"]
+        max_key_level = data.loc[data["season"] == season, "level"].max()
+        return max_key_level

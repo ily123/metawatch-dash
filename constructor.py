@@ -81,10 +81,44 @@ def spec_dropdown(id_, include_all=False):
         id=id_,
         options=role_options(include_all),
         placeholder="SELECT SPEC ROLE",
-        value="tank",
+        value="all" if include_all else "tank",
         clearable=False,
     )
     return role_dropdown
+
+
+def key_level_slider(
+    id_: str, range_max: int, selected_range: List[int]
+) -> dcc.RangeSlider:
+    """Constructs slider for tier list figure.
+
+    Parameters
+    ----------
+    id_ : str
+        name of the component, for callbacks
+    range_max : int
+        max value of slider range
+    selected_range : List[int, int]
+        default value position of the slider
+
+    Returns
+    ------
+    slider : dcc.RangeSlider
+    """
+    slider = dcc.RangeSlider(
+        id=id_,
+        min=2,
+        max=range_max,
+        step=None,
+        marks=dict(
+            zip(
+                range(2, range_max + 1),
+                [str(i) for i in range(2, range_max + 1)],
+            )
+        ),
+        value=selected_range,
+    )
+    return slider
 
 
 def role_options(include_all: bool) -> List[dict]:
