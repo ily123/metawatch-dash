@@ -3,6 +3,7 @@ from typing import List
 
 import dash_core_components as dcc
 import dash_html_components as html
+import plotly.graph_objects as go
 
 
 def season_dropdown(id_: str, ishidden: bool) -> dcc.Dropdown:
@@ -73,7 +74,20 @@ def figure_header_ensemble(elements: dict) -> list:
     return components
 
 
-def role_options(include_all=False) -> List[dict]:
+def spec_dropdown(id_, include_all=False):
+    """Constructs dropdown with class role options."""
+    role_dropdown = dcc.Dropdown(
+        className="dropdown",
+        id=id_,
+        options=role_options(include_all),
+        placeholder="SELECT SPEC ROLE",
+        value="tank",
+        clearable=False,
+    )
+    return role_dropdown
+
+
+def role_options(include_all: bool) -> List[dict]:
     """Returns options for class selection dropdown."""
     role_options = [
         {"label": "TANK", "value": "tank"},
@@ -84,3 +98,42 @@ def role_options(include_all=False) -> List[dict]:
     if include_all:
         role_options.append({"label": "ALL SPECS", "value": "all"})
     return role_options
+
+
+def annotate_weekly_figure(fig: go.Figure) -> go.Figure:
+    """Annotates weekly figure with seasonal labels."""
+    # add season timeline labels
+    fig.add_annotation(
+        dict(
+            x=1,
+            y=1,
+            yref="paper",
+            xanchor="left",
+            yanchor="top",
+            text="BFA S4 begins",
+            showarrow=True,
+        )
+    )
+    fig.add_annotation(
+        dict(
+            x=39,
+            y=1,
+            yref="paper",
+            xanchor="center",
+            yanchor="top",
+            text="BFA Post-patch begins",
+            showarrow=True,
+        )
+    )
+    fig.add_annotation(
+        dict(
+            x=47,
+            y=1,
+            yref="paper",
+            xanchor="left",
+            yanchor="top",
+            text="SL S1 begins",
+            showarrow=True,
+        )
+    )
+    return fig

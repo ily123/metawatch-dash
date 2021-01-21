@@ -1,3 +1,5 @@
+from typing import List
+
 import constructor
 import dash_core_components as dcc
 import dash_html_components as html
@@ -205,17 +207,21 @@ layout = html.Div(
             ),
         ),
         constructor.season_dropdown(id_="fig2-season-switch", ishidden=True),
-        dcc.Dropdown(
-            className="dropdown",
-            id="figure2-dropdown",
-            options=constructor.role_options(),
-            value="tank",
-            clearable=False,
-        ),
+        constructor.spec_dropdown(id_="figure2-dropdown"),
         dcc.Graph(
             id="keylevel-stacked-fig",
             config=fig_config,
         ),
+        html.Hr(),
+        html.Div(
+            className="figure-header",
+            children=constructor.figure_header_ensemble(
+                figure_header_elements["figure3"]
+            ),
+        ),
+        constructor.season_dropdown(id_="fig3-season-switch", ishidden=True),
+        constructor.spec_dropdown(id_="figure3-dropdown"),
+        dcc.Graph(id="week-stacked-fig", config=fig_config),
         html.Hr(),
         # ============
         html.H3("SPECS"),
@@ -275,6 +281,25 @@ def update_figure2(role, season):
     runs_per_spec_and_level = dataserver_.get_data_for_ridgeplot(season)
     stac = figure.StackedBarChart(runs_per_spec_and_level, "key", role, patch_name)
     return stac.assemble_figure()
+
+
+@app.callback(
+    Output(component_id="week-stacked-fig", component_property="figure"),
+    [
+        Input(component_id="figure3-dropdown", component_property="value"),
+        Input(component_id="fig3-season-switch", component_property="value"),
+    ],
+)
+def update_figure3(role, season):
+    """Switch between sorted by key and sorted by population view."""
+    runs_per_week_and_spec = dataserver_.get_data_for_weekly_chart()
+    patch_name = "since BFA S4"
+    stack_figure = figure.StackedBarChart(
+        runs_per_week_and_spec, "week", role, patch_name
+    )
+    stack_figure = stack_figure.assemble_figure()
+    stack_figure = constructor.annotate_weekly_figure(stack_figure)
+    return stack_figure
 
 
 @app.callback(

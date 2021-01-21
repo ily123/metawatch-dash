@@ -75,11 +75,13 @@ class DataServer:
         run_per_level = run_per_level.astype(int)
         return run_per_level
 
-    # week_summary = pd.pivot_table(
-    #    week_summary,
-    #    values="run_count",
-    #    index="spec",
-    #    columns="period",
-    #    fill_value=0,
-    # )
-    # return main_summary, week_summary
+    def get_data_for_weekly_chart(self) -> pd.DataFrame:
+        """Returns top 500 key counts resolved by week and spec."""
+        data = pd.pivot_table(
+            self.raw_data["weekly_top"],
+            values="run_count",
+            index="spec",
+            columns="period",
+            fill_value=0,
+        )
+        return data
