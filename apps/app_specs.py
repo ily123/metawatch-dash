@@ -197,6 +197,26 @@ layout = html.Div(
                 ),
             ]
         ),
+        html.Br(),
+        html.Div(
+            className="figure-header",
+            children=constructor.figure_header_ensemble(
+                figure_header_elements["figure2"]
+            ),
+        ),
+        constructor.season_dropdown(id_="fig2-season-switch", ishidden=True),
+        dcc.Dropdown(
+            className="dropdown",
+            id="figure2-dropdown",
+            options=constructor.role_options(),
+            value="tank",
+            clearable=False,
+        ),
+        dcc.Graph(
+            id="keylevel-stacked-fig",
+            config=fig_config,
+        ),
+        html.Hr(),
         # ============
         html.H3("SPECS"),
         dcc.Dropdown(
@@ -240,6 +260,21 @@ def update_figure1(season):
     runs_per_level = dataserver_.get_data_for_run_histogram(season)
     hist = figure.BasicHistogram(runs_per_level, patch_name)
     return ridgeplot.figure, bubble.make_figure2(), hist.make_figure()
+
+
+@app.callback(
+    Output(component_id="keylevel-stacked-fig", component_property="figure"),
+    [
+        Input(component_id="figure2-dropdown", component_property="value"),
+        Input(component_id="fig2-season-switch", component_property="value"),
+    ],
+)
+def update_figure2(role, season):
+    """Switch between sorted by key and sorted by population view."""
+    patch_name = PATCH_NAMES[season]
+    runs_per_spec_and_level = dataserver_.get_data_for_ridgeplot(season)
+    stac = figure.StackedBarChart(runs_per_spec_and_level, "key", role, patch_name)
+    return stac.assemble_figure()
 
 
 @app.callback(

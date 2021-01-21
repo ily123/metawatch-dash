@@ -71,3 +71,16 @@ def figure_header_ensemble(elements: dict) -> list:
             )
         )
     return components
+
+
+def role_options(include_all=False) -> List[dict]:
+    """Returns options for class selection dropdown."""
+    role_options = [
+        {"label": "TANK", "value": "tank"},
+        {"label": "HEALER", "value": "healer"},
+        {"label": "MELEE DPS", "value": "mdps"},
+        {"label": "RANGE DPS", "value": "rdps"},
+    ]
+    if include_all:
+        role_options.append({"label": "ALL SPECS", "value": "all"})
+    return role_options
