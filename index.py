@@ -27,6 +27,7 @@ app.layout = html.Div(
             ]
         ),
         dcc.Link("Go to Comps", href="/comps"),
+        dcc.Link("Go to Specs", href="/"),
         html.P(
             "Data updated: %s" % data_last_updated,
             style={"text-align": "right"},

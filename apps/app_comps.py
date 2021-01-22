@@ -1,3 +1,4 @@
+import blizzcolors
 import dash_core_components as dcc
 import dash_html_components as html
 import dataserver
@@ -6,10 +7,13 @@ from dash.dependencies import Input, Output
 
 DB_FILE_PATH = "data/summary.sqlite"
 dataserver_ = dataserver.DataServer(DB_FILE_PATH)
+composition = dataserver_.get_comp_data()
+composition = blizzcolors.vectorize_comps(composition)
 
 layout = html.Div(
     [
-        html.H3("COMPS"),
+        html.H3("COMPOSITION EXPLORER"),
+        html.P("Select roles for each party slot."),
         dcc.Dropdown(
             id="app-comps-dropdown",
             options=[
@@ -18,7 +22,6 @@ layout = html.Div(
             ],
         ),
         html.Div(id="app-comps-display-value"),
-        dcc.Link("Go to Specs", href="/"),
     ]
 )
 

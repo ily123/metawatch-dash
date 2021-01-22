@@ -91,3 +91,18 @@ class DataServer:
         data = self.raw_data["specs"]
         max_key_level = data.loc[data["season"] == season, "level"].max()
         return max_key_level
+
+    def get_comp_data(self) -> pd.DataFrame:
+        """Fetches composition table from the db.
+
+        Returns
+        -------
+        composition : pd.DataFrame
+            dataframe with following columns - tokenized comp name,
+            number of runs by comp, average and std dev of the run
+            key levels
+        """
+        conn = sqlite3.connect(self.db_file_path)
+        composition = pd.read_sql_query("SELECT * FROM composition", conn)
+        conn.close()
+        return composition
