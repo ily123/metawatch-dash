@@ -5,6 +5,38 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objects as go
 
+import blizzcolors
+
+
+def multi_spec_dropdown(id_: str, role: str) -> dcc.Dropdown:
+    """Constructs spec dropdown for page 2 composition app.
+
+    Parameters
+    ----------
+    id_ : str
+        html id of the component
+    role : str
+        specs to include in the figure; one of {'tank', 'healer', 'mdps', 'rdps'}
+
+    Returns
+    -------
+    dropdown : dcc.Dropdown
+        dropdown component with specs of given role
+    """
+    dropdown = dcc.Dropdown(
+        id="app-comps-dropdown",
+        options=[
+            {
+                "label": spec["spec_name"].upper() + " " + spec["class_name"].upper(),
+                "value": spec["token"],
+            }
+            for spec in blizzcolors.Specs().specs
+            if spec["role"] == role.lower()
+        ],
+        multi=True,
+    )
+    return dropdown
+
 
 def season_dropdown(id_: str, ishidden: bool) -> dcc.Dropdown:
     """Constructs dropdown season select menu.

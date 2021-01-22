@@ -1,4 +1,5 @@
 import blizzcolors
+import constructor
 import dash_core_components as dcc
 import dash_html_components as html
 import dataserver
@@ -14,13 +15,11 @@ layout = html.Div(
     [
         html.H3("COMPOSITION EXPLORER"),
         html.P("Select roles for each party slot."),
-        dcc.Dropdown(
-            id="app-comps-dropdown",
-            options=[
-                {"label": "App 1 - {}".format(i), "value": i}
-                for i in ["NYC", "MTL", "LA"]
-            ],
-        ),
+        constructor.multi_spec_dropdown(id_="tank_slot", role="tank"),
+        constructor.multi_spec_dropdown(id_="healer_slot", role="healer"),
+        constructor.multi_spec_dropdown(id_="first_dps_slot", role="mdps"),
+        constructor.multi_spec_dropdown(id_="second_dps_slot", role="rdps"),
+        constructor.multi_spec_dropdown(id_="third_dps_slot", role="mdps"),
         html.Div(id="app-comps-display-value"),
     ]
 )
