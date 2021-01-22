@@ -144,14 +144,27 @@ figure_header_elements = {
     ),
 }
 
+
 # I don't like that figure 1 is
 # taking longer to render than figure 2... It throws me off
 # when figure 2 loads before figure 1.
 # To solve this, let's precompute  panel 1 figures
 # so they come preloaded on start up
 # ridge plot and bubble plot (panel 1 and 2)
-def create_figure1(season):
-    """Updates the 3 panels of figure 1 based on season."""
+def create_figure1(season: str) -> Tuple[go.Figure]:
+    """Create the 3 panels of figure 1 based on season.
+
+    Parameters
+    ----------
+    season : str
+        season for which to plot the figure
+
+    Returns
+    -------
+    Tuple(go.Figure)
+        Tuple containing the ridgeplot, bubble plot, and
+        the histogram
+    """
     patch_name = PATCH_NAMES[season]
     # ridge plot and bubble plot (panel 1 and 2)
     runs_per_spec_and_level = dataserver_.get_data_for_ridgeplot(season)
@@ -296,8 +309,20 @@ layout = html.Div(
     Input(component_id="fig1-ridgeplot-season-switch", component_property="value"),
     prevent_initial_call=True,
 )
-def update_figure1(season):
-    """Updates the 3 panels of figure 1 based on season."""
+def update_figure1(season: str) -> Tuple[go.Figure]:
+    """Updates the 3 panels of figure 1 based on season.
+
+    Parameters
+    ----------
+    season : str
+        season for which to plot the figure
+
+    Returns
+    -------
+    Tuple(go.Figure)
+        Tuple containing the ridgeplot, bubble plot, and
+        the histogram
+    """
     return create_figure1(season)
 
 
@@ -308,12 +333,26 @@ def update_figure1(season):
         Input(component_id="fig2-season-switch", component_property="value"),
     ],
 )
-def update_figure2(role, season):
-    """Switch between sorted by key and sorted by population view."""
+def update_figure2(role, season) -> go.Figure:
+    """Updates figure 2 (spec % vs key level).
+
+    Parameters
+    ----------
+    role : str
+        specs to include in the figure; one of {'tank', 'healer', 'mdps', 'rdps'}
+    season : str
+        season for which to plot the figure
+
+    Returns
+    -------
+    stack_figure : go.Figure
+        top 500 weekly bar chart
+    """
     patch_name = PATCH_NAMES[season]
     runs_per_spec_and_level = dataserver_.get_data_for_ridgeplot(season)
     stac = figure.StackedBarChart(runs_per_spec_and_level, "key", role, patch_name)
-    return stac.assemble_figure()
+    stack_figure = stac.assemble_figure()
+    return stack_figure
 
 
 @app.callback(
@@ -323,8 +362,21 @@ def update_figure2(role, season):
         Input(component_id="fig3-season-switch", component_property="value"),
     ],
 )
-def update_figure3(role, season):
-    """Switch between sorted by key and sorted by population view."""
+def update_figure3(role: str, season: str) -> go.Figure:
+    """Updates figure 3 (the top 500 weekly bar chart).
+
+    Parameters
+    ----------
+    role : str
+        specs to include in the figure; one of {'tank', 'healer', 'mdps', 'rdps'}
+    season : str
+        season for which to plot the figure
+
+    Returns
+    -------
+    stack_figure : go.Fig
+        top 500 weekly bar chart
+    """
     runs_per_week_and_spec = dataserver_.get_data_for_weekly_chart()
     patch_name = "since BFA S4"
     stack_figure = figure.StackedBarChart(
@@ -347,7 +399,24 @@ def update_figure3(role, season):
 def update_figure4(
     population_slider: List[int], meta_slider: List[int], spec_role: str, season: str
 ) -> go.Figure:
-    """Updates tier list figure based on slider inputs."""
+    """Updates figure 4 (the tier list).
+
+    Parameters
+    ----------
+    population_slider : List[int]
+        value of the population slider
+    meta_slider : List[int]
+        value of the meta slider
+    season : str
+        season for which to plot the figure
+    spec_role : str
+        specs to include in the figure; one of {'tank', 'healer', 'mdps', 'rdps'}
+
+    Returns
+    -------
+    spec_meta_fig : go.Fig
+        spec meta index / spec tier bar chart
+    """
     population_min, population_max = population_slider
     meta_min, meta_max = meta_slider
     data = dataserver_.raw_data["specs"]
@@ -411,6 +480,12 @@ def update_slider_max_range(season: str) -> Tuple[dcc.RangeSlider]:
     Input(component_id="master-season-switch", component_property="value"),
     prevent_initial_call=True,
 )
-def set_season(season):
-    """Sets season values of individual figures via hidden switches."""
+def set_season(season: str) -> List[str]:
+    """Sets season values of individual figures via hidden switches.
+
+    Parameter
+    --------
+    season : str
+        season for which to plot the figures
+    """
     return [season] * 6  # this is the number of hidden switches

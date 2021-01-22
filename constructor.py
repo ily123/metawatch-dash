@@ -74,8 +74,45 @@ def figure_header_ensemble(elements: dict) -> list:
     return components
 
 
-def spec_dropdown(id_, include_all=False):
-    """Constructs dropdown with class role options."""
+def role_options(include_all: bool) -> List[dict]:
+    """Returns options for class selection dropdown.
+
+    Parameter
+    --------
+    include_all: bool
+        flag to include "all specs" as one of the options
+
+    Returns
+    -------
+    role_options : List[dict]
+        list of spec role options and values
+    """
+    role_options = [
+        {"label": "TANK", "value": "tank"},
+        {"label": "HEALER", "value": "healer"},
+        {"label": "MELEE DPS", "value": "mdps"},
+        {"label": "RANGE DPS", "value": "rdps"},
+    ]
+    if include_all:
+        role_options.append({"label": "ALL SPECS", "value": "all"})
+    return role_options
+
+
+def spec_dropdown(id_: str, include_all: bool = False) -> dcc.Dropdown:
+    """Constructs dropdown with class role options.
+
+    Parameters
+    ----------
+    id_ : str
+        html id of the component
+    include_all: bool
+        flag to include "all specs" as one of the options
+
+    Returns
+    -------
+    role_dropdown : dcc.Dropdown
+        dropdown component with spec roles as options
+    """
     role_dropdown = dcc.Dropdown(
         className="dropdown",
         id=id_,
@@ -121,21 +158,8 @@ def key_level_slider(
     return slider
 
 
-def role_options(include_all: bool) -> List[dict]:
-    """Returns options for class selection dropdown."""
-    role_options = [
-        {"label": "TANK", "value": "tank"},
-        {"label": "HEALER", "value": "healer"},
-        {"label": "MELEE DPS", "value": "mdps"},
-        {"label": "RANGE DPS", "value": "rdps"},
-    ]
-    if include_all:
-        role_options.append({"label": "ALL SPECS", "value": "all"})
-    return role_options
-
-
 def page1_errata() -> dcc.Markdown:
-    """Returns markdown text for page 1 errata div."""
+    """Returns markdown text element for page 1 errata div."""
     errata_and_faq = dcc.Markdown(  # &nbsp; is a hacky way to add a blank line to MD
         """
         #### FAQ:
