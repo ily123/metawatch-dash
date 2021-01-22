@@ -3,6 +3,7 @@ import constructor
 import dash_core_components as dcc
 import dash_html_components as html
 import dataserver
+import pandas as pd
 from app import app
 from dash.dependencies import Input, Output, State
 
@@ -36,14 +37,35 @@ layout = html.Div(
         State(component_id="second_dps_slot", component_property="value"),
         State(component_id="third_dps_slot", component_property="value"),
     ],
+    prevent_initial_call=True,
 )
 def find_compositions(
     value, tank_slot, healer_slot, first_dps_slot, second_dps_slot, third_dps_slot
 ):
     """Finds compositions that include selected specs."""
-    print(tank_slot)
-    print(healer_slot)
-    print(first_dps_slot)
-    print(second_dps_slot)
-    print(third_dps_slot)
+    fields = [tank_slot, healer_slot, first_dps_slot, second_dps_slot, third_dps_slot]
+    fields = [field for field in fields if field]
+    # Each field can have multiple entries. These need to be treated as
+    # OR selectors. For example, if field = [a, b, c], find all comps that
+    # include a or b or c
+    mask = None
+    for field in fields:  # too many loops T_T
+        field_mask = None
+        if len(field) > 1:
+            for spec in field:
+                if type(field_mask) == pd.Series:
+                    field_mask = (field_mask) | (composition[spec] > 0)
+                else:
+                    field_mask = composition[spec] > 0
+        else:
+            # the .count is there in case the user wants to find comp
+            # with two or three of the same spec
+            field_mask = composition[field[0]] >= fields.count(field)
+        if type(mask) == pd.Series:
+            mask = mask & field_mask
+        else:
+            mask = field_mask
+    print(fields)
+    print(mask.sum())
+    print(composition[mask])
     return 'You have selected "{}"'.format(value)
