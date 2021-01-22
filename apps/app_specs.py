@@ -148,6 +148,13 @@ figure_header_elements = {
 layout = html.Div(
     [
         html.Div(
+            id="master-switch-wrapper",
+            children=[
+                html.H4("SELECT SEASON"),
+                constructor.season_dropdown(id_="master-season-switch", ishidden=False),
+            ],
+        ),
+        html.Div(
             className="figure-header",
             children=constructor.figure_header_ensemble(
                 figure_header_elements["figure1"]
@@ -392,6 +399,23 @@ def update_slider_max_range(season: str) -> Tuple[dcc.RangeSlider]:
         selected_range=[16, 99],  # select it to the end
     )
     return population_slider, meta_slider
+
+
+@app.callback(
+    [
+        Output(component_id="fig1-ridgeplot-season-switch", component_property="value"),
+        Output(component_id="fig1-bubble-season-switch", component_property="value"),
+        Output(component_id="fig1-key-hist-season-switch", component_property="value"),
+        Output(component_id="fig2-season-switch", component_property="value"),
+        Output(component_id="fig3-season-switch", component_property="value"),
+        Output(component_id="fig4-season-switch", component_property="value"),
+    ],
+    Input(component_id="master-season-switch", component_property="value"),
+    prevent_initial_call=True,
+)
+def set_season(season):
+    """Sets season values of individual figures via hidden switches."""
+    return [season] * 6  # this is the number of hidden switches
 
 
 @app.callback(
