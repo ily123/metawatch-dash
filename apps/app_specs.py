@@ -144,6 +144,23 @@ figure_header_elements = {
     ),
 }
 
+# I don't like that figure 1 is
+# taking longer to render than figure 2... It throws me off
+# when figure 2 loads before figure 1.
+# To solve this, let's precompute  panel 1 figures
+# so they come preloaded on start up
+# ridge plot and bubble plot (panel 1 and 2)
+patch_name = PATCH_NAMES[CURRENT_SEASON]
+runs_per_spec_and_level = dataserver_.get_data_for_ridgeplot(CURRENT_SEASON)
+ridgeplot = figure.RidgePlot(runs_per_spec_and_level, patch_name)
+bubble = figure.BubblePlot(runs_per_spec_and_level, patch_name)
+# histogram (panel 3)
+runs_per_level = dataserver_.get_data_for_run_histogram(CURRENT_SEASON)
+hist = figure.BasicHistogram(runs_per_level, patch_name)
+default_ridgeplot = ridgeplot.figure
+default_bubble = bubble.make_figure2()
+default_hist = hist.make_figure()
+
 
 layout = html.Div(
     [
@@ -172,8 +189,9 @@ layout = html.Div(
                         dcc.Graph(
                             className="figure",
                             id="fig1-ridgeplot",
+                            figure=default_ridgeplot,
                             config=fig_config,
-                            style={"margin-top": "20px", "display": "none"},
+                            style={"margin-top": "20px"},
                         ),
                     ],
                 ),
@@ -186,6 +204,7 @@ layout = html.Div(
                         dcc.Graph(
                             className="figure",
                             id="fig1-bubble-chart",
+                            figure=default_bubble,
                             config=fig_config,
                         ),
                     ],
@@ -199,6 +218,7 @@ layout = html.Div(
                         dcc.Graph(
                             className="figure",
                             id="fig1-key-hist",
+                            figure=default_hist,
                             config=fig_config,
                         ),
                     ],
@@ -263,14 +283,6 @@ layout = html.Div(
 )
 
 
-@app.callback(Output("fig1-ridgeplot", "style"), [Input("fig1-ridgeplot", "figure")])
-def hide_figure(fig):
-    if fig is None:
-        return dict(display="none")
-    else:
-        return dict()
-
-
 @app.callback(
     [
         Output(component_id="fig1-ridgeplot", component_property="figure"),
@@ -278,7 +290,7 @@ def hide_figure(fig):
         Output(component_id="fig1-key-hist", component_property="figure"),
     ],
     Input(component_id="fig1-ridgeplot-season-switch", component_property="value"),
-    # prevent_initial_call=False,
+    prevent_initial_call=True,
 )
 def update_figure1(season):
     """Updates the 3 panels of figure 1 based on season."""
@@ -335,7 +347,6 @@ def update_figure3(role, season):
         Input(component_id="figure4-dropdown", component_property="value"),
         Input(component_id="fig4-season-switch", component_property="value"),
     ],
-    prevent_initial_call=False,
 )
 def update_figure4(
     population_slider: List[int], meta_slider: List[int], spec_role: str, season: str
