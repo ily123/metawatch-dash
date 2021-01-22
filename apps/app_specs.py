@@ -150,16 +150,20 @@ figure_header_elements = {
 # To solve this, let's precompute  panel 1 figures
 # so they come preloaded on start up
 # ridge plot and bubble plot (panel 1 and 2)
-patch_name = PATCH_NAMES[CURRENT_SEASON]
-runs_per_spec_and_level = dataserver_.get_data_for_ridgeplot(CURRENT_SEASON)
-ridgeplot = figure.RidgePlot(runs_per_spec_and_level, patch_name)
-bubble = figure.BubblePlot(runs_per_spec_and_level, patch_name)
-# histogram (panel 3)
-runs_per_level = dataserver_.get_data_for_run_histogram(CURRENT_SEASON)
-hist = figure.BasicHistogram(runs_per_level, patch_name)
-default_ridgeplot = ridgeplot.figure
-default_bubble = bubble.make_figure2()
-default_hist = hist.make_figure()
+def create_figure1(season):
+    """Updates the 3 panels of figure 1 based on season."""
+    patch_name = PATCH_NAMES[season]
+    # ridge plot and bubble plot (panel 1 and 2)
+    runs_per_spec_and_level = dataserver_.get_data_for_ridgeplot(season)
+    ridgeplot = figure.RidgePlot(runs_per_spec_and_level, patch_name)
+    bubble = figure.BubblePlot(runs_per_spec_and_level, patch_name)
+    # histogram (panel 3)
+    runs_per_level = dataserver_.get_data_for_run_histogram(season)
+    hist = figure.BasicHistogram(runs_per_level, patch_name)
+    return ridgeplot.figure, bubble.make_figure2(), hist.make_figure()
+
+
+default_ridgeplot, default_bubble, default_hist = create_figure1(CURRENT_SEASON)
 
 
 layout = html.Div(
@@ -294,15 +298,7 @@ layout = html.Div(
 )
 def update_figure1(season):
     """Updates the 3 panels of figure 1 based on season."""
-    patch_name = PATCH_NAMES[season]
-    # ridge plot and bubble plot (panel 1 and 2)
-    runs_per_spec_and_level = dataserver_.get_data_for_ridgeplot(season)
-    ridgeplot = figure.RidgePlot(runs_per_spec_and_level, patch_name)
-    bubble = figure.BubblePlot(runs_per_spec_and_level, patch_name)
-    # histogram (panel 3)
-    runs_per_level = dataserver_.get_data_for_run_histogram(season)
-    hist = figure.BasicHistogram(runs_per_level, patch_name)
-    return ridgeplot.figure, bubble.make_figure2(), hist.make_figure()
+    return create_figure1(season)
 
 
 @app.callback(
