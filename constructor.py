@@ -34,6 +34,7 @@ def multi_spec_dropdown(id_: str, role: str) -> dcc.Dropdown:
             if spec["role"] == role.lower()
         ],
         multi=True,
+        placeholder="All %s specs selected by default" % role,
     )
     return dropdown
 
