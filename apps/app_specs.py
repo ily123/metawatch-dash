@@ -257,6 +257,8 @@ layout = html.Div(
             ),
         ),
         dcc.Graph(id="meta-index-fig", config=fig_config),
+        html.Hr(),
+        html.Div(id="faq", children=constructor.page1_errata()),
     ]
 )
 

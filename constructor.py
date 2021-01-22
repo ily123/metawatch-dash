@@ -134,6 +134,41 @@ def role_options(include_all: bool) -> List[dict]:
     return role_options
 
 
+def page1_errata() -> dcc.Markdown:
+    """Returns markdown text for page 1 errata div."""
+    errata_and_faq = dcc.Markdown(  # &nbsp; is a hacky way to add a blank line to MD
+        """
+        #### FAQ:
+
+        **How frequently are the data updated?**
+
+        The data are updated every hour.
+
+        &nbsp;
+
+        **Why did you make this web site? Isn't raider.io enough?**
+
+        Raider.io is great.
+        For my part, I wanted a bit more insight into the data, so I made this dashboard.
+
+        Other good M+ stats websites are
+        [mplus.subcreation.net](https://mplus.subcreation.net)
+        and [bestkeystone.com](https://bestkeystone.com).
+
+        &nbsp;
+
+        **I saw a mistake, have a comment, have an idea**
+
+         My reddit handle is
+         [u/OtherwiseUniversity7](https://www.reddit.com/user/OtherwiseUniversity7).
+         Drop me a note whenever :)
+
+        &nbsp;
+        """
+    )
+    return errata_and_faq
+
+
 def annotate_weekly_figure(fig: go.Figure) -> go.Figure:
     """Annotates weekly figure with seasonal labels."""
     # add season timeline labels
