@@ -257,17 +257,6 @@ layout = html.Div(
             ),
         ),
         dcc.Graph(id="meta-index-fig", config=fig_config),
-        # ============
-        html.H3("SPECS"),
-        dcc.Dropdown(
-            id="app-specs-dropdown",
-            options=[
-                {"label": "App 1 - {}".format(i), "value": i}
-                for i in ["NYC", "MTL", "LA"]
-            ],
-        ),
-        html.Div(id="app-specs-display-value"),
-        dcc.Link("Go to Comps", href="/comps"),
     ]
 )
 
@@ -416,10 +405,3 @@ def update_slider_max_range(season: str) -> Tuple[dcc.RangeSlider]:
 def set_season(season):
     """Sets season values of individual figures via hidden switches."""
     return [season] * 6  # this is the number of hidden switches
-
-
-@app.callback(
-    Output("app-specs-display-value", "children"), Input("app-specs-dropdown", "value")
-)
-def display_value1(value):
-    return 'You have selected SPECS "{}"'.format(id(dataserver_))
