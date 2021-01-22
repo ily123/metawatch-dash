@@ -24,7 +24,7 @@ def multi_spec_dropdown(id_: str, role: str) -> dcc.Dropdown:
         dropdown component with specs of given role
     """
     dropdown = dcc.Dropdown(
-        id="app-comps-dropdown",
+        id=id_,
         options=[
             {
                 "label": spec["spec_name"].upper() + " " + spec["class_name"].upper(),
