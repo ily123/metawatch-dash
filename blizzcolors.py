@@ -199,9 +199,9 @@ def get_full_comp(composition):
     spec_util = Specs()
     composition.reset_index(inplace=True)
     full_names = composition.apply(
-        lambda row: [
-            spec_util.get_spec_name_by_token(letter) for letter in row["composition"]
-        ],
+        lambda row: sorted(
+            [spec_util.get_spec_name_by_token(letter) for letter in row["composition"]]
+        ),
         axis=1,
     )
     full_names = pd.DataFrame(full_names.values.tolist())

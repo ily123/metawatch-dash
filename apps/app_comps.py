@@ -91,10 +91,16 @@ def format_output(result: pd.DataFrame):
         # sort_action="native",
         # sort_mode="multi",
         # page_action="custom",
-        style_cell={"textAlign": "left"},
         row_selectable="single",
         page_size=100,
         style_as_list_view=True,
+        style_cell={
+            # "backgroundColor": "rgb(96, 96, 96)",
+            "fontWeight": "bold",
+            "textAlign": "left",
+            "text-transform": "uppercase"
+            # "text-shadow": "1px 1px 1px black",
+        },
         style_data_conditional=(
             [
                 {
@@ -102,7 +108,7 @@ def format_output(result: pd.DataFrame):
                         "filter_query": "{tank} = %s" % spec_token,
                         "column_id": "tank",
                     },
-                    "color": token_to_color[spec_token],
+                    "backgroundColor": token_to_color[spec_token],
                     "fontWeight": "bold",
                 }
                 for spec_token in list(token_to_color)
@@ -113,7 +119,7 @@ def format_output(result: pd.DataFrame):
                         "filter_query": "{healer} = %s" % spec_token,
                         "column_id": "healer",
                     },
-                    "color": token_to_color[spec_token],
+                    "backgroundColor": token_to_color[spec_token],
                     "fontWeight": "bold",
                 }
                 for spec_token in list(token_to_color)
@@ -124,7 +130,7 @@ def format_output(result: pd.DataFrame):
                         "filter_query": "{dps1} = %s" % spec_token,
                         "column_id": "dps1",
                     },
-                    "color": token_to_color[spec_token],
+                    "backgroundColor": token_to_color[spec_token],
                     "fontWeight": "bold",
                 }
                 for spec_token in list(token_to_color)
@@ -135,7 +141,7 @@ def format_output(result: pd.DataFrame):
                         "filter_query": "{dps2} = %s" % spec_token,
                         "column_id": "dps2",
                     },
-                    "color": token_to_color[spec_token],
+                    "backgroundColor": token_to_color[spec_token],
                     "fontWeight": "bold",
                 }
                 for spec_token in list(token_to_color)
@@ -146,7 +152,7 @@ def format_output(result: pd.DataFrame):
                         "filter_query": "{dps3} = %s" % spec_token,
                         "column_id": "dps3",
                     },
-                    "color": token_to_color[spec_token],
+                    "backgroundColor": token_to_color[spec_token],
                     "fontWeight": "bold",
                 }
                 for spec_token in list(token_to_color)
