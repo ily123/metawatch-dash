@@ -31,10 +31,10 @@ def multi_spec_dropdown(id_: str, role: str) -> dcc.Dropdown:
                 "value": spec["token"],
             }
             for spec in blizzcolors.Specs().specs
-            if spec["role"] == role.lower()
+            if spec["role"][-3:] in role
         ],
         multi=True,
-        placeholder="All %s specs selected by default" % role,
+        placeholder="Type spec name to search the menu. All specs selected by default.",
     )
     return dropdown
 

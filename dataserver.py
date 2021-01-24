@@ -103,6 +103,8 @@ class DataServer:
             key levels
         """
         conn = sqlite3.connect(self.db_file_path)
-        composition = pd.read_sql_query("SELECT * FROM composition", conn)
+        composition = pd.read_sql_query(
+            "SELECT * FROM composition ORDER BY run_count DESC", conn
+        )
         conn.close()
         return composition

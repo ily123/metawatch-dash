@@ -48,6 +48,7 @@ class Specs:
                 spec_id=row[3],
                 role=row[4],
                 token=row[5],
+                shorthand=row[6],
                 color=class_colors.get_rbg(row[0]),
                 index=index,
             )
@@ -74,6 +75,13 @@ class Specs:
         for spec in self.specs:
             if spec["spec_id"] == spec_id:
                 return spec["spec_name"]
+        raise ValueError("spec id not found in spec table")
+
+    def get_spec_name_by_token(self, spec_token):
+        """Get class name given a spec token."""
+        for spec in self.specs:
+            if spec["shorthand"] == spec_token:
+                return spec["token"]
         raise ValueError("spec id not found in spec table")
 
     def get_role(self, spec_id):
@@ -185,3 +193,18 @@ def vectorize_comps(composition: pd.DataFrame) -> pd.DataFrame:
     comp_matrix.columns = [spec["token"] for spec in spec_util.specs]
     composition_vectorized = pd.concat([composition, comp_matrix], axis=1)
     return composition_vectorized
+
+
+def get_full_comp(composition):
+    spec_util = Specs()
+    composition.reset_index(inplace=True)
+    full_names = composition.apply(
+        lambda row: [
+            spec_util.get_spec_name_by_token(letter) for letter in row["composition"]
+        ],
+        axis=1,
+    )
+    full_names = pd.DataFrame(full_names.values.tolist())
+    full_names.columns = ["tank", "healer", "dps1", "dps2", "dps3"]
+    comp_full_names = pd.concat([full_names, composition], axis=1)
+    return comp_full_names

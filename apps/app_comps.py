@@ -2,6 +2,7 @@ import blizzcolors
 import constructor
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_table
 import dataserver
 import pandas as pd
 from app import app
@@ -15,14 +16,14 @@ composition = blizzcolors.vectorize_comps(composition)
 layout = html.Div(
     [
         html.H3("COMPOSITION EXPLORER"),
-        html.P("Select roles for each party slot."),
+        html.P("Select specs for each party slot."),
         constructor.multi_spec_dropdown(id_="tank_slot", role="tank"),
         constructor.multi_spec_dropdown(id_="healer_slot", role="healer"),
-        constructor.multi_spec_dropdown(id_="first_dps_slot", role="mdps"),
-        constructor.multi_spec_dropdown(id_="second_dps_slot", role="rdps"),
-        constructor.multi_spec_dropdown(id_="third_dps_slot", role="mdps"),
-        html.Div(id="app-comps-display-value"),
+        constructor.multi_spec_dropdown(id_="first_dps_slot", role="dps"),
+        constructor.multi_spec_dropdown(id_="second_dps_slot", role="dps"),
+        constructor.multi_spec_dropdown(id_="third_dps_slot", role="dps"),
         html.Button("FIND COMPS", id="comp-finder-submit-button", n_clicks=0),
+        html.Div(id="app-comps-display-value"),
     ]
 )
 
@@ -45,6 +46,8 @@ def find_compositions(
     """Finds compositions that include selected specs."""
     fields = [tank_slot, healer_slot, first_dps_slot, second_dps_slot, third_dps_slot]
     fields = [field for field in fields if field]
+    if fields == []:
+        return "SHOW ALL COMPS HERE"
     # Each field can have multiple entries. These need to be treated as
     # OR selectors. For example, if field = [a, b, c], find all comps that
     # include a or b or c
@@ -65,7 +68,91 @@ def find_compositions(
             mask = mask & field_mask
         else:
             mask = field_mask
-    print(fields)
-    print(mask.sum())
-    print(composition[mask])
-    return 'You have selected "{}"'.format(value)
+    cmpz = composition[mask]  # [:100]
+    return format_output(cmpz[["composition", "run_count", "level_mean", "level_std"]])
+
+
+def format_output(result: pd.DataFrame):
+    """Formats results of the comp search into a data table."""
+    result = blizzcolors.get_full_comp(result)
+    result = result.drop(["index", "composition"], axis=1)
+    print(result)
+
+    specs = blizzcolors.Specs().specs
+    token_to_color = dict(
+        [[spec["token"], "rgb(%d,%d,%d)" % spec["color"]] for spec in specs]
+    )
+    print(list(token_to_color))
+    print(token_to_color)
+    result_table = dash_table.DataTable(
+        id="comp_result",
+        columns=[{"name": col, "id": col} for col in result.columns],
+        data=result.to_dict("records"),
+        # sort_action="native",
+        # sort_mode="multi",
+        # page_action="custom",
+        style_cell={"textAlign": "left"},
+        row_selectable="single",
+        page_size=100,
+        style_as_list_view=True,
+        style_data_conditional=(
+            [
+                {
+                    "if": {
+                        "filter_query": "{tank} = %s" % spec_token,
+                        "column_id": "tank",
+                    },
+                    "color": token_to_color[spec_token],
+                    "fontWeight": "bold",
+                }
+                for spec_token in list(token_to_color)
+            ]
+            + [
+                {
+                    "if": {
+                        "filter_query": "{healer} = %s" % spec_token,
+                        "column_id": "healer",
+                    },
+                    "color": token_to_color[spec_token],
+                    "fontWeight": "bold",
+                }
+                for spec_token in list(token_to_color)
+            ]
+            + [
+                {
+                    "if": {
+                        "filter_query": "{dps1} = %s" % spec_token,
+                        "column_id": "dps1",
+                    },
+                    "color": token_to_color[spec_token],
+                    "fontWeight": "bold",
+                }
+                for spec_token in list(token_to_color)
+            ]
+            + [
+                {
+                    "if": {
+                        "filter_query": "{dps2} = %s" % spec_token,
+                        "column_id": "dps2",
+                    },
+                    "color": token_to_color[spec_token],
+                    "fontWeight": "bold",
+                }
+                for spec_token in list(token_to_color)
+            ]
+            + [
+                {
+                    "if": {
+                        "filter_query": "{dps3} = %s" % spec_token,
+                        "column_id": "dps3",
+                    },
+                    "color": token_to_color[spec_token],
+                    "fontWeight": "bold",
+                }
+                for spec_token in list(token_to_color)
+            ]
+            # + [{"if": {"row_index": "odd"}, "backgroundColor": "dark gray"}]
+        ),
+        style_header={"backgroundColor": "rgb(230, 230, 230)", "fontWeight": "bold"},
+    )
+    return result_table
