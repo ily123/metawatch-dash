@@ -13,6 +13,8 @@ from dash.dependencies import Input, Output, State
 DB_FILE_PATH = "data/summary.sqlite"
 dataserver_ = dataserver.DataServer(DB_FILE_PATH)
 composition = dataserver_.get_comp_data()
+x = composition.composition.astype(str).map(len)
+composition = composition[x == 5]
 composition = blizzcolors.vectorize_comps(composition)
 
 layout = html.Div(
@@ -78,34 +80,114 @@ def find_compositions(
     )  # [["composition", "run_count", "level_mean", "level_std"]])
 
 
-def format_output(result0: pd.DataFrame):
+# def find_tank(result: pd.DataFrame):
+
+
+def format_output(result0: pd.DataFrame) -> html.Table:
     """Formats results of the comp search into a data table."""
+    # Formatting the results is a massive PITA.
+    # There are 40+ columns, and condensing them into something that
+    # both fits on the screen and is interpretable is rough.
+    # So here is what we do:
+    print(result0)
+    # Find the tanks and condense them into a single column.
+    tank_cols = [
+        "death_knight_blood",
+        "demon_hunter_vengeance",
+        "druid_guardian",
+        "monk_brewmaster",
+        "paladin_protection",
+        "warrior_protection",
+    ]
+    tanks = result0[tank_cols].apply(lambda row: tank_cols[list(row).index(1)], axis=1)
+    # Find the healers and condense them into a single column.
+    healer_cols = [
+        "druid_restoration",
+        "monk_mistweaver",
+        "paladin_holy",
+        "priest_discipline",
+        "priest_holy",
+        "shaman_restoration",
+    ]
+    healers = result0[healer_cols].apply(
+        lambda row: healer_cols[list(row).index(1)], axis=1
+    )
+    print(healers)
+    # drop both healers and tanks from the main table
+    result0.drop(
+        inplace=True,
+        labels=tank_cols + healer_cols,
+        axis=1,
+    )
+    # and append the condensed columns
+    result0["tank"] = tanks
+    result0["healer"] = healers
+    # Segregate melee DPS from range DPS.
+
+    # Drop DPS columns that are all 0.
     result0 = result0.copy()
+    mask = result0.sum(axis=0) != 0
+    mask = list(mask)
+    result0 = result0.loc[:, mask].copy()
+    # remove stats for now
+    stats = result0[["run_count", "level_mean", "level_std"]].copy()
+    stats = stats.round(decimals=1)
+    stats = list(stats.values)
+    print(stats)
     result0.drop(
         inplace=True,
         labels=["composition", "run_count", "level_mean", "level_std"],
         axis=1,
     )
     t0 = time.time()
-    rows = result0.apply(lambda row: list(row), axis=1)
 
+    # rearrange columns
+    new_order = ["tank", "healer"]
+    dps_cols = [dps for dps in result0.columns if dps not in new_order]
+    dps_order = result0[dps_cols].sum(axis=0).copy()
+    dps_order = dps_order.sort_values(ascending=False, inplace=False).index.values
+    new_order.extend(dps_order)
+    result0 = result0[new_order].copy()
+    print(result0)
+
+    rows = result0.apply(lambda row: list(row), axis=1)
     # spec_name_to_col_index = dict(zip(range(len(result0.columns), result0.columns)))
-    colors = [spec["color"] for spec in blizzcolors.Specs().specs]
+    colors = dict(
+        [[spec["token"], spec["color"]] for spec in blizzcolors.Specs().specs]
+    )
+    abbr = dict([[spec["token"], spec["abbr"]] for spec in blizzcolors.Specs().specs])
     table = html.Table(children=[])
-    for row in rows:
-        row_ = html.Tr(children=[], style={"background-color": "gray"})
+    for row_index, row in enumerate(rows):
+        row_ = html.Tr(children=[html.Td(stats[row_index][i]) for i in range(3)])
         for index, cell in enumerate(row):
             style = {}
-            if cell == 0:
+            if result0.columns[index] in ["tank", "healer"]:
+                color = colors[cell]
+                style = {
+                    "background-color": "rgb(%d,%d,%d)" % color,
+                    "border": "1px solid black",
+                }
+                cell = abbr[cell]
+            elif cell == 0:
                 style = {"background-color": "white", "color": "white"}
             else:
                 style = {
-                    "background-color": "rgb(%d,%d,%d)" % colors[index],
+                    "background-color": "rgb(%d,%d,%d)"
+                    % colors[result0.columns[index]],
                     "border": "1px solid black",
                 }
-                print(style)
+                if cell == 1:
+                    cell = abbr[result0.columns[index]]
+                else:
+                    cell = "%sx%d" % (abbr[result0.columns[index]][0:2], cell)
             row_.children.append(html.Td(cell, style=style))
         table.children.append(row_)
-    table.children.insert(0, html.Tr([html.Th(column) for column in result0.columns]))
+    # table.children.insert(
+    #    0,
+    #    html.Tr(
+    #        [html.Th(column) for column in result0.columns],
+    #        style={"font-size": "15px"},
+    #    ),
+    # )
     print("Table formatting ", time.time() - t0)
     return table
