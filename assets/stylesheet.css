@@ -117,3 +117,29 @@ h4 {
 li{
     margin: 10px 0;
 }
+
+
+/* Comp broser table */
+
+th {
+    color: red;
+    transform: rotate(-90.0deg);
+}
+table {
+    width : 100%;
+    table-layout: fixed;
+}
+
+td {
+    text-align: center;
+}
+/*
+td.zero {
+    background-color: white;
+    color: white;
+}
+
+td.testClass {
+    background-color: gray;
+}
+*/

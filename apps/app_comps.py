@@ -1,3 +1,5 @@
+import time
+
 import blizzcolors
 import constructor
 import dash_core_components as dcc
@@ -44,6 +46,7 @@ def find_compositions(
     value, tank_slot, healer_slot, first_dps_slot, second_dps_slot, third_dps_slot
 ):
     """Finds compositions that include selected specs."""
+    t0 = time.time()
     fields = [tank_slot, healer_slot, first_dps_slot, second_dps_slot, third_dps_slot]
     fields = [field for field in fields if field]
     if fields == []:
@@ -69,9 +72,40 @@ def find_compositions(
         else:
             mask = field_mask
     cmpz = composition[mask]  # [:100]
-    return format_output(cmpz[["composition", "run_count", "level_mean", "level_std"]])
+    print("Comp filtering: ", time.time() - t0)
+    return format_output(
+        cmpz[:50]
+    )  # [["composition", "run_count", "level_mean", "level_std"]])
 
 
-def format_output(result: pd.DataFrame):
+def format_output(result0: pd.DataFrame):
     """Formats results of the comp search into a data table."""
-    pass
+    result0 = result0.copy()
+    result0.drop(
+        inplace=True,
+        labels=["composition", "run_count", "level_mean", "level_std"],
+        axis=1,
+    )
+    t0 = time.time()
+    rows = result0.apply(lambda row: list(row), axis=1)
+
+    # spec_name_to_col_index = dict(zip(range(len(result0.columns), result0.columns)))
+    colors = [spec["color"] for spec in blizzcolors.Specs().specs]
+    table = html.Table(children=[])
+    for row in rows:
+        row_ = html.Tr(children=[], style={"background-color": "gray"})
+        for index, cell in enumerate(row):
+            style = {}
+            if cell == 0:
+                style = {"background-color": "white", "color": "white"}
+            else:
+                style = {
+                    "background-color": "rgb(%d,%d,%d)" % colors[index],
+                    "border": "1px solid black",
+                }
+                print(style)
+            row_.children.append(html.Td(cell, style=style))
+        table.children.append(row_)
+    table.children.insert(0, html.Tr([html.Th(column) for column in result0.columns]))
+    print("Table formatting ", time.time() - t0)
+    return table
