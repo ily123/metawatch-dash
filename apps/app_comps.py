@@ -20,7 +20,9 @@ composition = blizzcolors.vectorize_comps(composition)
 layout = html.Div(
     [
         html.H3("COMPOSITION EXPLORER"),
-        html.P("Select specs for each party slot."),
+        html.P(
+            "Select specs for each party slot. Type inside field to search spec name."
+        ),
         constructor.multi_spec_dropdown(id_="tank_slot", role="tank"),
         constructor.multi_spec_dropdown(id_="healer_slot", role="healer"),
         constructor.multi_spec_dropdown(id_="first_dps_slot", role="dps"),

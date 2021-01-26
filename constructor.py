@@ -34,7 +34,7 @@ def multi_spec_dropdown(id_: str, role: str) -> dcc.Dropdown:
             if spec["role"][-3:] in role
         ],
         multi=True,
-        placeholder="Type spec name to search the menu. All specs selected by default.",
+        placeholder="{role}. ALL INCLUDED BY DEFAULT.".format(role=role.upper()),
     )
     return dropdown
 
