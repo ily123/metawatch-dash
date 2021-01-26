@@ -124,7 +124,6 @@ def format_output(result0: pd.DataFrame) -> html.Table:
     # and append the condensed columns
     result0["tank"] = tanks
     result0["healer"] = healers
-    # Segregate melee DPS from range DPS.
 
     # Drop DPS columns that are all 0.
     result0 = result0.copy()
@@ -161,6 +160,7 @@ def format_output(result0: pd.DataFrame) -> html.Table:
     table = html.Table(children=[])
     for row_index, row in enumerate(rows):
         row_ = html.Tr(children=[html.Td(stats[row_index][i]) for i in range(3)])
+        bg_color = "lightgray" if row_index % 2 == 0 else "white"
         for index, cell in enumerate(row):
             style = {}
             if result0.columns[index] in ["tank", "healer"]:
@@ -171,7 +171,7 @@ def format_output(result0: pd.DataFrame) -> html.Table:
                 }
                 cell = abbr[cell]
             elif cell == 0:
-                style = {"background-color": "white", "color": "white"}
+                style = {"background-color": bg_color, "color": bg_color}
             else:
                 style = {
                     "background-color": "rgb(%d,%d,%d)"
@@ -183,13 +183,19 @@ def format_output(result0: pd.DataFrame) -> html.Table:
                 else:
                     cell = "%sx%d" % (abbr[result0.columns[index]][0:2], cell)
             row_.children.append(html.Td(cell, style=style))
+        row_.style = {"background-color": bg_color}
         table.children.append(row_)
-    # table.children.insert(
-    #    0,
-    #    html.Tr(
-    #        [html.Th(column) for column in result0.columns],
-    #        style={"font-size": "15px"},
-    #    ),
-    # )
+    table.children.insert(
+        0,
+        html.Tr(
+            [
+                html.Th(column)
+                for column in ["N", "AVG", "STD", "TANK", "HLR"]
+                + [abbr[tkn] for tkn in result0.columns[2:]]
+            ],
+            style={"font-size": "15px"},
+        ),
+    )
     print("Table formatting ", time.time() - t0)
+    print(result0.columns)
     return table
