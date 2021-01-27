@@ -39,6 +39,45 @@ def multi_spec_dropdown(id_: str, role: str) -> dcc.Dropdown:
     return dropdown
 
 
+def sortby_dropdown(id_: str) -> dcc.Dropdown:
+    """Constructs sort dropdown for page 2 composition app.
+
+    Parameters
+    ----------
+    id_ : str
+        html id of the component
+
+    Returns
+    -------
+    dropdown : dcc.Dropdown
+        dropdown component with sort option
+    """
+    dropdown = dcc.Dropdown(
+        id=id_,
+        options=[
+            {
+                "label": "Total Keys",
+                "value": "total",
+            },
+            {
+                "label": "Avg Key Level",
+                "value": "avg",
+            },
+            {
+                "label": "Max Key Level, then Avg Key Level, then Total Keys",
+                "value": "max+avg+total",
+            },
+            {
+                "label": "Max Key Level, then Total Keys, then Avg Key Level",
+                "value": "max+total+avg",
+            },
+        ],
+        value="total",
+        clearable=False,
+    )
+    return dropdown
+
+
 def season_dropdown(id_: str, ishidden: bool) -> dcc.Dropdown:
     """Constructs dropdown season select menu.
 

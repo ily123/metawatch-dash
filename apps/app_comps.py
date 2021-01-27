@@ -16,6 +16,31 @@ composition = dataserver_.get_comp_data()
 x = composition.composition.astype(str).map(len)
 composition = composition[x == 5]
 composition = blizzcolors.vectorize_comps(composition)
+# filter out invalid comps
+tank_cols = [
+    "death_knight_blood",
+    "demon_hunter_vengeance",
+    "druid_guardian",
+    "monk_brewmaster",
+    "paladin_protection",
+    "warrior_protection",
+]
+healer_cols = [
+    "druid_restoration",
+    "monk_mistweaver",
+    "paladin_holy",
+    "priest_discipline",
+    "priest_holy",
+    "shaman_restoration",
+]
+
+mask_tanks = composition[tank_cols].sum(axis=1) == 1
+mask_healers = composition[healer_cols].sum(axis=1) == 1
+mask = mask_tanks & mask_healers
+
+print(len(composition))
+composition = composition[mask]
+print(len(composition))
 
 layout = html.Div(
     [
@@ -29,6 +54,7 @@ layout = html.Div(
         constructor.multi_spec_dropdown(id_="second_dps_slot", role="dps"),
         constructor.multi_spec_dropdown(id_="third_dps_slot", role="dps"),
         html.Button("FIND COMPS", id="comp-finder-submit-button", n_clicks=0),
+        constructor.sortby_dropdown(id_="sort-by-dropdown"),
         dcc.Input(id="comp-page-number", type="number", placeholder=1, value=1),
         html.Button("Go", id="page-submit-button", n_clicks=0),
         html.Div(id="app-comps-display-value"),
@@ -41,6 +67,7 @@ layout = html.Div(
     Input(component_id="comp-finder-submit-button", component_property="n_clicks"),
     Input(component_id="page-submit-button", component_property="n_clicks"),
     [
+        State(component_id="sort-by-dropdown", component_property="value"),
         State(component_id="comp-page-number", component_property="value"),
         State(component_id="tank_slot", component_property="value"),
         State(component_id="healer_slot", component_property="value"),
@@ -53,6 +80,7 @@ layout = html.Div(
 def find_compositions(
     main_submit_click,
     page_change_click,
+    sortby,
     page_number,
     tank_slot,
     healer_slot,
@@ -87,8 +115,22 @@ def find_compositions(
             mask = mask & field_mask
         else:
             mask = field_mask
-    cmpz = composition[mask]  # [:100]
+    cmpz = composition[mask].copy()
+    # sort the result inplace
+    sortby_col = {
+        "max+total+avg": ["run_count", "level_mean"],
+        "max-avg-total": ["level_mean", "run_count"],
+        "total": ["run_count", "level_mean"],
+        "avg": ["level_mean", "run_count"],
+    }
+    cmpz.sort_values(
+        by=sortby_col[sortby], axis=0, ascending=False, inplace=True
+    )  # [:100]
     print("Comp filtering: ", time.time() - t0)
+
+    cmpz = cmpz[50 * page_number : (50 * page_number) + 50].copy()
+    print(cmpz[["death_knight_blood"]])
+    print("=" * 50)
     return format_output(
         cmpz[50 * page_number : (50 * page_number) + 50]
     )  # [["composition", "run_count", "level_mean", "level_std"]])
