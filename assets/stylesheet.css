@@ -136,6 +136,9 @@ table {
 td {
     text-align: center;
 }
+tr:hover {
+    border: 1px gray solid;
+}
 /*
 td.zero {
     background-color: white;

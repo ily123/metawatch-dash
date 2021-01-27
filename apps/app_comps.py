@@ -210,7 +210,15 @@ def format_output(result0: pd.DataFrame) -> html.Table:
     colors = dict(
         [[spec["token"], spec["color"]] for spec in blizzcolors.Specs().specs]
     )
-    abbr = dict([[spec["token"], spec["abbr"]] for spec in blizzcolors.Specs().specs])
+    if len(result0.columns) > 20:
+        chars = 2
+    elif len(result0.columns) < 20 and len(result0.columns) >= 17:
+        chars = 3
+    elif len(result0.columns) < 17 and len(result0.columns) >= 10:
+        chars = 4
+    abbr = dict(
+        [[spec["token"], spec["abbr"][:chars]] for spec in blizzcolors.Specs().specs]
+    )
     table = html.Table(children=[])
     for row_index, row in enumerate(rows):
         row_ = html.Tr(children=[html.Td(stats[row_index][i]) for i in range(3)])
@@ -235,15 +243,17 @@ def format_output(result0: pd.DataFrame) -> html.Table:
                 if cell == 1:
                     cell = abbr[result0.columns[index]]
                 else:
-                    cell = "%sx%d" % (abbr[result0.columns[index]][0:2], cell)
-            row_.children.append(html.Td(cell, style=style))
+                    cell = "x2"
+            row_.children.append(
+                html.Td(cell, title=result0.columns[index], style=style)
+            )
         row_.style = {"background-color": bg_color}
         table.children.append(row_)
     table.children.insert(
         0,
         html.Tr(
             [
-                html.Th(column)
+                html.Th(column[:chars])
                 for column in ["N", "AVG", "STD", "TANK", "HLR"]
                 + [abbr[tkn] for tkn in result0.columns[2:]]
             ],
