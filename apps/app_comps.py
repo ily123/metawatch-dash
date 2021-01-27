@@ -29,6 +29,8 @@ layout = html.Div(
         constructor.multi_spec_dropdown(id_="second_dps_slot", role="dps"),
         constructor.multi_spec_dropdown(id_="third_dps_slot", role="dps"),
         html.Button("FIND COMPS", id="comp-finder-submit-button", n_clicks=0),
+        dcc.Input(id="comp-page-number", type="number", placeholder=1, value=1),
+        html.Button("Go", id="page-submit-button", n_clicks=0),
         html.Div(id="app-comps-display-value"),
     ]
 )
@@ -37,7 +39,9 @@ layout = html.Div(
 @app.callback(
     Output(component_id="app-comps-display-value", component_property="children"),
     Input(component_id="comp-finder-submit-button", component_property="n_clicks"),
+    Input(component_id="page-submit-button", component_property="n_clicks"),
     [
+        State(component_id="comp-page-number", component_property="value"),
         State(component_id="tank_slot", component_property="value"),
         State(component_id="healer_slot", component_property="value"),
         State(component_id="first_dps_slot", component_property="value"),
@@ -47,9 +51,17 @@ layout = html.Div(
     prevent_initial_call=True,
 )
 def find_compositions(
-    value, tank_slot, healer_slot, first_dps_slot, second_dps_slot, third_dps_slot
+    main_submit_click,
+    page_change_click,
+    page_number,
+    tank_slot,
+    healer_slot,
+    first_dps_slot,
+    second_dps_slot,
+    third_dps_slot,
 ):
     """Finds compositions that include selected specs."""
+    page_number = page_number - 1
     t0 = time.time()
     fields = [tank_slot, healer_slot, first_dps_slot, second_dps_slot, third_dps_slot]
     fields = [field for field in fields if field]
@@ -78,7 +90,7 @@ def find_compositions(
     cmpz = composition[mask]  # [:100]
     print("Comp filtering: ", time.time() - t0)
     return format_output(
-        cmpz[:50]
+        cmpz[50 * page_number : (50 * page_number) + 50]
     )  # [["composition", "run_count", "level_mean", "level_std"]])
 
 
