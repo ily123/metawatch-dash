@@ -120,32 +120,15 @@ li{
 
 
 /* Comp broser table */
-/*
-th {
-    color: black;
-    transform: rotate(-70.0deg);
-}
-*/
 table {
     width : 100%;
     table-layout: fixed;
-    /*display: block;
-    overflow-x: auto;*/
 }
 
 td {
     text-align: center;
 }
 tr:hover {
-    border: 1px gray solid;
+    border: 3px red solid;
+    background-color: yellow;
 }
-/*
-td.zero {
-    background-color: white;
-    color: white;
-}
-
-td.testClass {
-    background-color: gray;
-}
-*/

@@ -231,6 +231,7 @@ def format_output(result0: pd.DataFrame) -> html.Table:
                     "background-color": "rgb(%d,%d,%d)" % color,
                     "border": "1px solid black",
                 }
+                title = cell.upper().replace("_", " ")
                 cell = abbr[cell]
             elif cell == 0:
                 style = {"background-color": bg_color, "color": bg_color}
@@ -240,13 +241,12 @@ def format_output(result0: pd.DataFrame) -> html.Table:
                     % colors[result0.columns[index]],
                     "border": "1px solid black",
                 }
+                title = result0.columns[index].upper().replace("_", " ")
                 if cell == 1:
                     cell = abbr[result0.columns[index]]
                 else:
                     cell = "x2"
-            row_.children.append(
-                html.Td(cell, title=result0.columns[index], style=style)
-            )
+            row_.children.append(html.Td(cell, title=title, style=style))
         row_.style = {"background-color": bg_color}
         table.children.append(row_)
     table.children.insert(
