@@ -40,7 +40,6 @@ def multi_spec_dropdown(id_: str, role: str) -> dcc.Dropdown:
     drop_wrap = html.Div(
         children=[html.Label(role.upper()), dropdown],
     )
-
     return drop_wrap
 
 
@@ -59,13 +58,14 @@ def sortby_dropdown(id_: str) -> dcc.Dropdown:
     """
     dropdown = dcc.Dropdown(
         id=id_,
+        className="spec-input",
         options=[
             {
-                "label": "Total Keys",
+                "label": "Total number of runs (N) by each comp",
                 "value": "total",
             },
             {
-                "label": "Avg Key Level",
+                "label": "Average key level of runs (Avg) by each comp",
                 "value": "avg",
             },
             {
@@ -80,7 +80,10 @@ def sortby_dropdown(id_: str) -> dcc.Dropdown:
         value="total",
         clearable=False,
     )
-    return dropdown
+    drop_wrap = html.Div(
+        children=[html.Label("SORT BY"), dropdown],
+    )
+    return drop_wrap
 
 
 def season_dropdown(id_: str, ishidden: bool) -> dcc.Dropdown:

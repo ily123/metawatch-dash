@@ -46,15 +46,16 @@ layout = html.Div(
     [
         html.H3("COMPOSITION EXPLORER"),
         html.P(
-            "Select specs for each party slot. Type inside field to search spec name."
+            """Select specs for each party slot.
+            You can type part of the spec name to filter the dropdown list."""
         ),
         constructor.multi_spec_dropdown(id_="tank_slot", role="tank"),
         constructor.multi_spec_dropdown(id_="healer_slot", role="healer"),
         constructor.multi_spec_dropdown(id_="first_dps_slot", role="dps"),
         constructor.multi_spec_dropdown(id_="second_dps_slot", role="dps"),
         constructor.multi_spec_dropdown(id_="third_dps_slot", role="dps"),
-        html.Button("FIND COMPS", id="comp-finder-submit-button", n_clicks=0),
         constructor.sortby_dropdown(id_="sort-by-dropdown"),
+        html.Button("FIND COMPS", id="comp-finder-submit-button", n_clicks=0),
         dcc.Input(id="comp-page-number", type="number", placeholder=1, value=1),
         html.Button("Go", id="page-submit-button", n_clicks=0),
         html.Div(id="app-comps-display-value"),
