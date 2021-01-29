@@ -55,7 +55,11 @@ layout = html.Div(
         constructor.multi_spec_dropdown(id_="second_dps_slot", role="dps"),
         constructor.multi_spec_dropdown(id_="third_dps_slot", role="dps"),
         constructor.sortby_dropdown(id_="sort-by-dropdown"),
-        html.Button("FIND COMPS", id="comp-finder-submit-button", n_clicks=0),
+        html.Div(
+            html.Button("FIND COMPS", id="comp-finder-submit-button", n_clicks=0),
+            id="comp-finder-submit-button-wrapper",
+        ),
+        html.Br(),
         dcc.Input(id="comp-page-number", type="number", placeholder=1, value=1),
         html.Button("Go", id="page-submit-button", n_clicks=0),
         html.Div(id="app-comps-display-value"),

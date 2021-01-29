@@ -149,3 +149,21 @@ label {
     float: left;
     padding-bottom: 10px;
 }
+#comp-finder-submit-button-wrapper{
+    text-align: center;
+}
+#comp-finder-submit-button{
+    margin: auto;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 5px;
+    margin-top: 20px;
+    border-radius: 4px;
+    color: white;
+    background-color: #333;
+}
+
+#comp-finder-submit-button:active {
+  transform: translateY(4px);
+}
+
