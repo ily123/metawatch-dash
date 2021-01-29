@@ -240,6 +240,7 @@ def format_output(result0: pd.DataFrame) -> html.Table:
                 cell = abbr[cell]
             elif cell == 0:
                 style = {"background-color": bg_color, "color": bg_color}
+                title = ""
             else:
                 style = {
                     "background-color": "rgb(%d,%d,%d)"
