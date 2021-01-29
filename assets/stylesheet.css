@@ -132,3 +132,20 @@ tr:hover {
     border: 3px red solid;
     background-color: yellow;
 }
+
+
+/* Formatting of comp input form */
+label {
+    /* Other styling... */
+    text-align: right;
+    clear: both;
+    float:left;
+    margin-right:15px;
+    width: 10%;
+    padding-top 50px;
+}
+.spec-input {
+    width: 80%;
+    float: left;
+    padding-bottom: 10px;
+}

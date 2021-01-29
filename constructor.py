@@ -25,6 +25,7 @@ def multi_spec_dropdown(id_: str, role: str) -> dcc.Dropdown:
     """
     dropdown = dcc.Dropdown(
         id=id_,
+        className="spec-input",
         options=[
             {
                 "label": spec["spec_name"].upper() + " " + spec["class_name"].upper(),
@@ -34,9 +35,13 @@ def multi_spec_dropdown(id_: str, role: str) -> dcc.Dropdown:
             if spec["role"][-3:] in role
         ],
         multi=True,
-        placeholder="{role}. ALL INCLUDED BY DEFAULT.".format(role=role.upper()),
+        placeholder="ALL INCLUDED BY DEFAULT.",
     )
-    return dropdown
+    drop_wrap = html.Div(
+        children=[html.Label(role.upper()), dropdown],
+    )
+
+    return drop_wrap
 
 
 def sortby_dropdown(id_: str) -> dcc.Dropdown:
