@@ -135,6 +135,14 @@ tr:hover {
 
 
 /* Formatting of comp input form */
+.Select--multi .Select-value {
+    color: black;
+    background-color: #EAEAF1;
+    border-color: black;
+}
+.Select--multi .Select-value-icon {
+    border-color: black;
+}
 label {
     /* Other styling... */
     text-align: right;
@@ -149,10 +157,10 @@ label {
     float: left;
     padding-bottom: 10px;
 }
-#comp-finder-submit-button-wrapper{
+#comp-finder-submit-button-wrapper {
     text-align: center;
 }
-#comp-finder-submit-button{
+#comp-finder-submit-button {
     margin: auto;
     font-weight: bold;
     font-size: 16px;
@@ -166,4 +174,3 @@ label {
 #comp-finder-submit-button:active {
   transform: translateY(4px);
 }
-
