@@ -141,8 +141,8 @@ label {
     clear: both;
     float:left;
     margin-right:15px;
+    margin-top: 10px;
     width: 10%;
-    padding-top 50px;
 }
 .spec-input {
     width: 80%;
