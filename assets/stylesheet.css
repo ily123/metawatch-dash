@@ -174,3 +174,9 @@ label {
 #comp-finder-submit-button:active {
   transform: translateY(4px);
 }
+
+/* paging button */
+#comp-page-number {
+    display: flex;
+    border: 1px red solid
+}
