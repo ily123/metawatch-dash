@@ -95,15 +95,13 @@ def find_compositions(
 ):
     """Finds compositions that include selected specs."""
     page_number = page_number - 1
-    t0 = time.time()
     fields = [tank_slot, healer_slot, first_dps_slot, second_dps_slot, third_dps_slot]
     fields = [field for field in fields if field]
     if fields == []:
-        return "SHOW ALL COMPS HERE"
+        mask = [True] * len(composition)
     # Each field can have multiple entries. These need to be treated as
     # OR selectors. For example, if field = [a, b, c], find all comps that
     # include a or b or c
-    mask = None
     for field in fields:  # too many loops T_T
         field_mask = None
         if len(field) > 1:
@@ -120,7 +118,7 @@ def find_compositions(
             mask = mask & field_mask
         else:
             mask = field_mask
-    cmpz = composition[mask].copy()
+    cmpz = composition[mask].copy(deep=True)
     # sort the result inplace
     sortby_col = {
         "max+total+avg": ["run_count", "level_mean"],
@@ -128,17 +126,9 @@ def find_compositions(
         "total": ["run_count", "level_mean"],
         "avg": ["level_mean", "run_count"],
     }
-    cmpz.sort_values(
-        by=sortby_col[sortby], axis=0, ascending=False, inplace=True
-    )  # [:100]
-    print("Comp filtering: ", time.time() - t0)
-
-    cmpz = cmpz[50 * page_number : (50 * page_number) + 50].copy()
-    print(cmpz[["death_knight_blood"]])
-    print("=" * 50)
-    return format_output(
-        cmpz[50 * page_number : (50 * page_number) + 50]
-    )  # [["composition", "run_count", "level_mean", "level_std"]])
+    cmpz.sort_values(by=sortby_col[sortby], axis=0, ascending=False, inplace=True)
+    cmpz = cmpz[50 * page_number : (50 * page_number) + 50]
+    return format_output(cmpz[50 * page_number : (50 * page_number) + 50])
 
 
 # def find_tank(result: pd.DataFrame):
@@ -150,7 +140,7 @@ def format_output(result0: pd.DataFrame) -> html.Table:
     # There are 40+ columns, and condensing them into something that
     # both fits on the screen and is interpretable is rough.
     # So here is what we do:
-    print(result0)
+    result0 = result0
     # Find the tanks and condense them into a single column.
     tank_cols = [
         "death_knight_blood",
