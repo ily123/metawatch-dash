@@ -186,13 +186,19 @@ def vectorize_comps(composition: pd.DataFrame) -> pd.DataFrame:
         original dataframe, plus 36 columns encoding spec frequencies
         for each comp
     """
+    print(len(composition))
     spec_util = Specs()
     comp_matrix = composition.apply(
         lambda row: spec_util.vectorize_comp_token(row["composition"]), axis=1
     )
     comp_matrix = pd.DataFrame(comp_matrix.values.tolist())
     comp_matrix.columns = [spec["token"] for spec in spec_util.specs]
+    print("comp matrix", len(comp_matrix))
+    print("comp", len(composition))
     composition_vectorized = pd.concat([composition, comp_matrix], axis=1)
+    print("comp_vec", len(composition_vectorized))
+    print(composition_vectorized.isnull().sum())
+    print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
     return composition_vectorized
 
 

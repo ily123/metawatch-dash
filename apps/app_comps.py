@@ -1,3 +1,4 @@
+import math
 import time
 
 import blizzcolors
@@ -13,10 +14,11 @@ from dash.dependencies import Input, Output, State
 DB_FILE_PATH = "data/summary.sqlite"
 dataserver_ = dataserver.DataServer(DB_FILE_PATH)
 composition = dataserver_.get_comp_data()
-x = composition.composition.astype(str).map(len)
-composition = composition[x == 5]
 composition = blizzcolors.vectorize_comps(composition)
-# filter out invalid comps
+# check that each comp has 5 members
+members = composition.composition.astype(str).map(len)
+composition = composition[members == 5]
+# check that each comp has a healer and a tank
 tank_cols = [
     "death_knight_blood",
     "demon_hunter_vengeance",
@@ -37,10 +39,7 @@ healer_cols = [
 mask_tanks = composition[tank_cols].sum(axis=1) == 1
 mask_healers = composition[healer_cols].sum(axis=1) == 1
 mask = mask_tanks & mask_healers
-
-print(len(composition))
 composition = composition[mask]
-print(len(composition))
 
 layout = html.Div(
     [
@@ -60,33 +59,46 @@ layout = html.Div(
             id="comp-finder-submit-button-wrapper",
         ),
         html.Br(),
+        html.Div(id="app-comps-display-value"),
+        html.P("Page"),
         dcc.Input(id="comp-page-number", type="number", placeholder=1, value=1),
         html.Button("Go", id="page-submit-button", n_clicks=0),
-        html.Div(id="app-comps-display-value"),
     ]
 )
 
 
 @app.callback(
-    Output(component_id="app-comps-display-value", component_property="children"),
+    [
+        Output(component_id="app-comps-display-value", component_property="children"),
+        Output(component_id="comp-page-number", component_property="value"),
+    ],
     Input(component_id="comp-finder-submit-button", component_property="n_clicks"),
     Input(component_id="page-submit-button", component_property="n_clicks"),
     [
         State(component_id="sort-by-dropdown", component_property="value"),
         State(component_id="comp-page-number", component_property="value"),
+        State(
+            component_id="comp-finder-submit-button",
+            component_property="n_clicks_timestamp",
+        ),
+        State(
+            component_id="page-submit-button", component_property="n_clicks_timestamp"
+        ),
         State(component_id="tank_slot", component_property="value"),
         State(component_id="healer_slot", component_property="value"),
         State(component_id="first_dps_slot", component_property="value"),
         State(component_id="second_dps_slot", component_property="value"),
         State(component_id="third_dps_slot", component_property="value"),
     ],
-    prevent_initial_call=True,
+    prevent_initial_call=False,
 )
 def find_compositions(
     main_submit_click,
     page_change_click,
     sortby,
     page_number,
+    main_click_ts,
+    page_click_ts,
     tank_slot,
     healer_slot,
     first_dps_slot,
@@ -94,9 +106,13 @@ def find_compositions(
     third_dps_slot,
 ):
     """Finds compositions that include selected specs."""
-    page_number = page_number - 1
+    if main_click_ts and page_click_ts:
+        if int(main_click_ts) > int(page_click_ts):
+            page_number = 1
+    print("MAIN CLICK", main_submit_click)
     fields = [tank_slot, healer_slot, first_dps_slot, second_dps_slot, third_dps_slot]
     fields = [field for field in fields if field]
+    mask = None
     if fields == []:
         mask = [True] * len(composition)
     # Each field can have multiple entries. These need to be treated as
@@ -127,8 +143,13 @@ def find_compositions(
         "avg": ["level_mean", "run_count"],
     }
     cmpz.sort_values(by=sortby_col[sortby], axis=0, ascending=False, inplace=True)
-    cmpz = cmpz[50 * page_number : (50 * page_number) + 50]
-    return format_output(cmpz[50 * page_number : (50 * page_number) + 50])
+    if page_number * 50 > len(cmpz):
+        page_number = math.ceil(len(cmpz) / 50.0) - 1
+        cmpz = cmpz[page_number * 50 :]
+    else:
+        page_number = page_number - 1
+        cmpz = cmpz[50 * page_number : (50 * page_number) + 50]
+    return format_output(cmpz), page_number + 1
 
 
 # def find_tank(result: pd.DataFrame):
@@ -140,7 +161,6 @@ def format_output(result0: pd.DataFrame) -> html.Table:
     # There are 40+ columns, and condensing them into something that
     # both fits on the screen and is interpretable is rough.
     # So here is what we do:
-    result0 = result0
     # Find the tanks and condense them into a single column.
     tank_cols = [
         "death_knight_blood",
@@ -163,7 +183,6 @@ def format_output(result0: pd.DataFrame) -> html.Table:
     healers = result0[healer_cols].apply(
         lambda row: healer_cols[list(row).index(1)], axis=1
     )
-    print(healers)
     # drop both healers and tanks from the main table
     result0.drop(
         inplace=True,
@@ -174,31 +193,27 @@ def format_output(result0: pd.DataFrame) -> html.Table:
     result0["tank"] = tanks
     result0["healer"] = healers
 
-    # Drop DPS columns that are all 0.
-    result0 = result0.copy()
-    mask = result0.sum(axis=0) != 0
-    mask = list(mask)
-    result0 = result0.loc[:, mask].copy()
     # remove stats for now
-    stats = result0[["run_count", "level_mean", "level_std"]].copy()
+    stats = result0[["run_count", "level_mean", "level_std"]].copy(deep=True)
     stats = stats.round(decimals=1)
     stats = list(stats.values)
-    print(stats)
     result0.drop(
         inplace=True,
         labels=["composition", "run_count", "level_mean", "level_std"],
         axis=1,
     )
     t0 = time.time()
+    # Drop DPS columns that are all 0.
+    mask = list(result0.sum(axis=0) != 0)
+    result0 = result0.loc[:, mask]
 
     # rearrange columns
     new_order = ["tank", "healer"]
     dps_cols = [dps for dps in result0.columns if dps not in new_order]
-    dps_order = result0[dps_cols].sum(axis=0).copy()
+    dps_order = result0[dps_cols].sum(axis=0)
     dps_order = dps_order.sort_values(ascending=False, inplace=False).index.values
     new_order.extend(dps_order)
-    result0 = result0[new_order].copy()
-    print(result0)
+    result0 = result0[new_order]
 
     rows = result0.apply(lambda row: list(row), axis=1)
     # spec_name_to_col_index = dict(zip(range(len(result0.columns), result0.columns)))
@@ -257,5 +272,4 @@ def format_output(result0: pd.DataFrame) -> html.Table:
         ),
     )
     print("Table formatting ", time.time() - t0)
-    print(result0.columns)
     return table
