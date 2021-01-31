@@ -60,9 +60,25 @@ layout = html.Div(
         ),
         html.Br(),
         html.Div(id="app-comps-display-value"),
-        html.P("Page"),
-        dcc.Input(id="comp-page-number", type="number", placeholder=1, value=1),
-        html.Button("Go", id="page-submit-button", n_clicks=0),
+        html.Div(
+            children=[
+                html.P("Page", id="page-label", className="pagination-wrap"),
+                dcc.Input(
+                    id="comp-page-number",
+                    className="pagination-wrap",
+                    type="number",
+                    placeholder=1,
+                    value=1,
+                ),
+                html.Button(
+                    "Go",
+                    className="pagination-wrap",
+                    id="page-submit-button",
+                    n_clicks=0,
+                ),
+                html.P(id="page-count-label", className="pagination-wrap"),
+            ],
+        ),
     ]
 )
 
@@ -71,6 +87,7 @@ layout = html.Div(
     [
         Output(component_id="app-comps-display-value", component_property="children"),
         Output(component_id="comp-page-number", component_property="value"),
+        Output(component_id="page-count-label", component_property="children"),
     ],
     Input(component_id="comp-finder-submit-button", component_property="n_clicks"),
     Input(component_id="page-submit-button", component_property="n_clicks"),
@@ -106,10 +123,11 @@ def find_compositions(
     third_dps_slot,
 ):
     """Finds compositions that include selected specs."""
+    if page_number < 1:
+        page_number = 1
     if main_click_ts and page_click_ts:
         if int(main_click_ts) > int(page_click_ts):
             page_number = 1
-    print("MAIN CLICK", main_submit_click)
     fields = [tank_slot, healer_slot, first_dps_slot, second_dps_slot, third_dps_slot]
     fields = [field for field in fields if field]
     mask = None
@@ -143,13 +161,15 @@ def find_compositions(
         "avg": ["level_mean", "run_count"],
     }
     cmpz.sort_values(by=sortby_col[sortby], axis=0, ascending=False, inplace=True)
-    if page_number * 50 > len(cmpz):
-        page_number = math.ceil(len(cmpz) / 50.0) - 1
+    total_pages = math.ceil(len(cmpz) / 50.0)
+
+    if page_number > total_pages:
+        page_number = total_pages - 1
         cmpz = cmpz[page_number * 50 :]
     else:
         page_number = page_number - 1
         cmpz = cmpz[50 * page_number : (50 * page_number) + 50]
-    return format_output(cmpz), page_number + 1
+    return format_output(cmpz), page_number + 1, "of %d" % total_pages
 
 
 # def find_tank(result: pd.DataFrame):

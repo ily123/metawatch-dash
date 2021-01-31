@@ -176,7 +176,15 @@ label {
 }
 
 /* paging button */
+.pagination-wrap {
+    display: inline-block;
+}
+#page-label {
+    margin-right: 10px;
+}
 #comp-page-number {
-    display: flex;
-    border: 1px red solid
+    width: 50px;
+}
+#page-count-label {
+    margin-left: 10px;
 }
