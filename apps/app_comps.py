@@ -237,7 +237,6 @@ def format_output(result0: pd.DataFrame) -> html.Table:
     result0 = result0[new_order]
 
     rows = result0.apply(lambda row: list(row), axis=1)
-    # spec_name_to_col_index = dict(zip(range(len(result0.columns), result0.columns)))
     colors = dict(
         [[spec["token"], spec["color"]] for spec in blizzcolors.Specs().specs]
     )
@@ -253,7 +252,13 @@ def format_output(result0: pd.DataFrame) -> html.Table:
     )
     table = html.Table(children=[])
     for row_index, row in enumerate(rows):
-        row_ = html.Tr(children=[html.Td(stats[row_index][i]) for i in range(3)])
+        row_ = html.Tr(
+            children=[
+                html.Td(stats[row_index][0]),
+                html.Td("%1.1f" % stats[row_index][1]),
+                html.Td(stats[row_index][2]),
+            ]
+        )
         bg_color = "lightgray" if row_index % 2 == 0 else "white"
         for index, cell in enumerate(row):
             style = {}
