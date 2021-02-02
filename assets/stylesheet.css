@@ -128,10 +128,6 @@ table {
 td {
     text-align: center;
 }
-tr:hover {
-    border: 3px red solid;
-    background-color: yellow;
-}
 
 
 /* Formatting of comp input form */
