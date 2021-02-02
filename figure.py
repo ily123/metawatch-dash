@@ -438,6 +438,44 @@ class RidgePlot:
         return fig
 
 
+class BasicBarChart:
+    """Draws a histogram of period vs run count."""
+
+    def __init__(self, data: pd.DataFrame) -> None:
+        """Inits with period/run count data.
+
+        Parameters
+        ----------
+        data : pd.DataFrame
+            two column df with period and run counts
+        """
+        self.data = data
+
+        # adjust data to start with week 1
+        if self.data.period.min() != 1:
+            self.data.period = self.data.period - min(self.data.period) + 1
+
+    def draw_figure(self) -> go.Figure:
+        """Draws the bar histogram of period vs run count.
+
+        Returns
+        -------
+        fig : go.Figure
+            the figure object run counts vs week
+        """
+        fig = go.Figure(
+            data=go.Bar(
+                x=self.data.period,
+                y=self.data.run_count,
+                marker_color="lightgray",
+                marker_line_color="black",
+                hovertemplate="WEEK %{x}<br>%{y:,}<extra></extra>",
+            )
+        )
+        fig.update_layout(yaxis_title="<b>RUNS</b>", xaxis_title="<b>WEEK</b>")
+        return fig
+
+
 class BasicHistogram:
     """Draws a histogram of key levels vs runs."""
 
