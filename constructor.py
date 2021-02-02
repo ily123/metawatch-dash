@@ -61,19 +61,19 @@ def sortby_dropdown(id_: str) -> dcc.Dropdown:
         className="spec-input",
         options=[
             {
-                "label": "Total number of runs (N) by each comp",
+                "label": "Total number of runs (N)",
                 "value": "total",
             },
             {
-                "label": "Average key level of runs (Avg) by each comp",
+                "label": "Average key level of runs (AVG)",
                 "value": "avg",
             },
             {
-                "label": "Max Key Level, then Avg Key Level, then Total Keys",
+                "label": "Max Key Level (MAX), then Avg Key Level, then Total Keys",
                 "value": "max+avg+total",
             },
             {
-                "label": "Max Key Level, then Total Keys, then Avg Key Level",
+                "label": "Max Key Level (MAX), then Total Keys, then Avg Key Level",
                 "value": "max+total+avg",
             },
         ],

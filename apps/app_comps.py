@@ -156,8 +156,8 @@ def find_compositions(
     cmpz = composition[mask].copy(deep=True)
     # sort the result inplace
     sortby_col = {
-        "max+total+avg": ["run_count", "level_mean"],
-        "max-avg-total": ["level_mean", "run_count"],
+        "max+total+avg": ["level_max", "run_count", "level_mean"],
+        "max+avg+total": ["level_max", "level_mean", "run_count"],
         "total": ["run_count", "level_mean"],
         "avg": ["level_mean", "run_count"],
     }
