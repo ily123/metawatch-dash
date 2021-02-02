@@ -6,7 +6,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from app import app
-from apps import app_comps, app_specs
+from apps import app_activity, app_comps, app_specs
 
 DB_FILE_PATH = "data/summary.sqlite"
 data_last_updated = datetime.datetime.fromtimestamp(
@@ -49,6 +49,8 @@ def display_page(pathname: str) -> html.Div:
     """Returns main content of the page."""
     if pathname == "/comps":
         return app_comps.layout
+    elif pathname == "/activity":
+        return app_activity.layout
     elif pathname == "/":
         return app_specs.layout
     else:
