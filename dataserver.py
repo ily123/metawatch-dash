@@ -108,3 +108,16 @@ class DataServer:
         )
         conn.close()
         return composition
+
+    def get_activity_data(self) -> pd.DataFrame:
+        """Fetches activity table from the db.
+
+        Returns
+        -------
+        activity : pd.DataFrame
+            dataframe with periods and their run counts
+        """
+        conn = sqlite3.connect(self.db_file_path)
+        activity = pd.read_sql_query("SELECT * FROM activity", conn)
+        conn.close()
+        return activity
