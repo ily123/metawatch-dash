@@ -154,6 +154,10 @@ def find_compositions(
         else:
             mask = field_mask
     cmpz = composition[mask].copy(deep=True)
+    if len(cmpz) == 0:
+        msg = """There are no compositions like that in the database.
+            If you get this message, let met know in Discord."""
+        return msg, 0, 0
     # sort the result inplace
     sortby_col = {
         "max+total+avg": ["level_max", "run_count", "level_mean"],
