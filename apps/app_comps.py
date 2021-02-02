@@ -14,6 +14,7 @@ from dash.dependencies import Input, Output, State
 DB_FILE_PATH = "data/summary.sqlite"
 dataserver_ = dataserver.DataServer(DB_FILE_PATH)
 composition = dataserver_.get_comp_data()
+print(composition)
 composition = blizzcolors.vectorize_comps(composition)
 # check that each comp has 5 members
 members = composition.composition.astype(str).map(len)
@@ -214,12 +215,12 @@ def format_output(result0: pd.DataFrame) -> html.Table:
     result0["healer"] = healers
 
     # remove stats for now
-    stats = result0[["run_count", "level_mean", "level_std"]].copy(deep=True)
+    stats = result0[["run_count", "level_mean", "level_max"]].copy(deep=True)
     stats = stats.round(decimals=1)
     stats = list(stats.values)
     result0.drop(
         inplace=True,
-        labels=["composition", "run_count", "level_mean", "level_std"],
+        labels=["composition", "run_count", "level_mean", "level_std", "level_max"],
         axis=1,
     )
     t0 = time.time()
@@ -240,7 +241,8 @@ def format_output(result0: pd.DataFrame) -> html.Table:
     colors = dict(
         [[spec["token"], spec["color"]] for spec in blizzcolors.Specs().specs]
     )
-    if len(result0.columns) > 20:
+    chars = 10
+    if len(result0.columns) >= 20:
         chars = 2
     elif len(result0.columns) < 20 and len(result0.columns) >= 17:
         chars = 3
@@ -276,7 +278,7 @@ def format_output(result0: pd.DataFrame) -> html.Table:
                 if cell == 1:
                     cell = abbr[result0.columns[index]]
                 else:
-                    cell = "x2"
+                    cell = "x%d" % cell
             row_.children.append(html.Td(cell, title=title, style=style))
         row_.style = {"background-color": bg_color}
         table.children.append(row_)
@@ -285,7 +287,7 @@ def format_output(result0: pd.DataFrame) -> html.Table:
         html.Tr(
             [
                 html.Th(column[:chars])
-                for column in ["N", "AVG", "STD", "TANK", "HLR"]
+                for column in ["N", "AVG", "MAX", "TANK", "HLR"]
                 + [abbr[tkn] for tkn in result0.columns[2:]]
             ],
             style={"font-size": "15px"},
