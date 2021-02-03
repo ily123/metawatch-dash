@@ -294,7 +294,7 @@ layout = html.Div(
             ),
         ),
         dcc.Graph(id="meta-index-fig", config=fig_config),
-        html.Hr(),
+        html.Br(),
     ]
 )
 

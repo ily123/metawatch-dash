@@ -6,8 +6,9 @@ from apps import app_activity, app_comps, app_specs
 
 layout = html.Div(
     [
-        html.H3("FAQ AND ERRATA"),
+        html.H3("FAQ"),
         html.Br(),
         html.Div(id="faq", children=constructor.faq_errata()),
+        html.Br(),
     ]
 )

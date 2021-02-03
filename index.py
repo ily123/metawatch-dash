@@ -14,7 +14,8 @@ data_last_updated = datetime.datetime.fromtimestamp(
 ).strftime("%Y-%m-%d")
 
 app.layout = html.Div(
-    [
+    id="main-wrap",
+    children=[
         dcc.Location(id="url", refresh=False),
         html.Header(html.H1("BENCHED.me")),
         html.Nav(
@@ -43,7 +44,7 @@ app.layout = html.Div(
                 html.P("Patreon"),
             ]
         ),
-    ]
+    ],
 )
 
 

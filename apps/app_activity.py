@@ -34,5 +34,6 @@ layout = html.Div(
             since the start of BFA S4."""
         ),
         dcc.Graph(figure=fig, config=fig_config),
+        html.Br(),
     ]
 )
