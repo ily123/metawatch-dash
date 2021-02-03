@@ -70,6 +70,7 @@ body {
     padding:0;
     background-color: lightgray;
     font-family: Arial, Helvetica, sans-serif;
+    border: red 1px solid;
 }
 
 main {
@@ -80,7 +81,6 @@ main {
     padding-left: 50px;
     padding-right: 50px;
     padding-top: 30px;
-    min-width: 1000px;
     max-width: 1000px;
     border: 1px black solid;
     background-color: white;

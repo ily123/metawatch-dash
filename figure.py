@@ -401,7 +401,7 @@ class RidgePlot:
     def _assemble_components(self) -> Type[go.Figure]:
         """Assembles traces, annotations, and buttons into a plotly figure."""
         fig = go.Figure(data=self._get_all_traces())
-        fig.update_layout(width=900, height=1500, showlegend=False)
+        fig.update_layout(height=1500, showlegend=False)
         fig.update_layout(updatemenus=self.buttons)
         fig.update_layout(annotations=self._keep_annotations("all"))
         max_x = self.summary.best_key.max()
@@ -593,7 +593,6 @@ class BubblePlot:
         fig.update_layout(
             xaxis=dict(visible=False),
             yaxis=dict(visible=False),
-            width=900,
             height=600,
             showlegend=False,
             title=dict(
@@ -826,7 +825,6 @@ class StackedChart:
             layout=dict(
                 xaxis=self.get_xaxis(),
                 yaxis=self.get_yaxis(),
-                width=900,
                 height=500,
                 barmode="stack",  # plotly ignores barmode unless traces are bar
                 title=dict(
@@ -957,7 +955,6 @@ class MetaIndexBarChart:
         fig.add_traces(trace)
 
         fig.update_layout(
-            width=900,
             height=1100,
             xaxis_title="Meta Ratio (spec % at meta level / spec % at population level)",
             showlegend=False,
