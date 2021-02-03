@@ -238,12 +238,10 @@ def key_level_slider(
     return slider
 
 
-def page1_errata() -> dcc.Markdown:
+def faq_errata() -> dcc.Markdown:
     """Returns markdown text element for page 1 errata div."""
     errata_and_faq = dcc.Markdown(  # &nbsp; is a hacky way to add a blank line to MD
         """
-        #### FAQ:
-
         **How frequently are the data updated?**
 
         The data are updated every hour.

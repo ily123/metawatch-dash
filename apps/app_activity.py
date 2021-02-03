@@ -30,7 +30,7 @@ layout = html.Div(
     [
         html.H3("PLAYER ACTIVITY"),
         html.P(
-            """This figure shows the number of runs recorded each week
+            """This figure shows the number of M+ runs recorded each week
             since the start of BFA S4."""
         ),
         dcc.Graph(figure=fig, config=fig_config),

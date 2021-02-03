@@ -6,7 +6,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from app import app
-from apps import app_activity, app_comps, app_specs
+from apps import app_activity, app_comps, app_faq, app_specs
 
 DB_FILE_PATH = "data/summary.sqlite"
 data_last_updated = datetime.datetime.fromtimestamp(
@@ -19,15 +19,18 @@ app.layout = html.Div(
         html.Header(html.H1("BENCHED.me")),
         html.Nav(
             [
-                html.A("OVERVIEW", href="#figure1"),
-                html.A("SPEC PERFORMANCE", href="#figure2"),
-                html.A("WEEKLY TOP 500", href="#figure3"),
-                html.A("TIER LIST", href="#figure4"),
-                html.A("FAQ", href="#faq"),
+                html.A("SPECS", href="/"),
+                html.A("COMPS", href="/comps"),
+                html.A("PLAYER ACTIVITY", href="/activity"),
+                html.A("FAQ", href="/faq"),
+                # I need this for later:
+                # html.A("OVERVIEW", href="#figure1"),
+                # html.A("SPEC PERFORMANCE", href="#figure2"),
+                # html.A("WEEKLY TOP 500", href="#figure3"),
+                # html.A("TIER LIST", href="#figure4"),
+                # html.A("FAQ", href="#faq"),
             ]
         ),
-        dcc.Link("Go to Comps", href="/comps"),
-        dcc.Link("Go to Specs", href="/"),
         html.P(
             "Data updated: %s" % data_last_updated,
             style={"text-align": "right"},
@@ -51,6 +54,8 @@ def display_page(pathname: str) -> html.Div:
         return app_comps.layout
     elif pathname == "/activity":
         return app_activity.layout
+    elif pathname == "/faq":
+        return app_faq.layout
     elif pathname == "/":
         return app_specs.layout
     else:
