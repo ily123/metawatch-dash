@@ -1,8 +1,7 @@
 import dash
 
 app = dash.Dash(__name__, suppress_callback_exceptions=True)
-application = app.server
-application.index_string = """<!DOCTYPE html>
+app.index_string = """<!DOCTYPE html>
     <html>
     <head>
       <!-- Plausible.io tracking script -->
@@ -23,3 +22,4 @@ application.index_string = """<!DOCTYPE html>
     </body>
     </html>
     """
+application = app.server
