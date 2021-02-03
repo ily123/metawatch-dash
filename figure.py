@@ -464,15 +464,30 @@ class BasicBarChart:
             the figure object run counts vs week
         """
         fig = go.Figure(
-            data=go.Bar(
-                x=self.data.period,
-                y=self.data.run_count,
-                marker_color="lightgray",
-                marker_line_color="black",
-                hovertemplate="WEEK %{x}<br>%{y:,}<extra></extra>",
-            )
+            data=[
+                go.Bar(
+                    x=self.data.period,
+                    y=self.data.run_count,
+                    marker_color="lightgray",
+                    marker_line_color="black",
+                    hovertemplate="WEEK %{x}<br>%{y:,}<extra></extra>",
+                    showlegend=False,
+                ),
+                go.Scatter(
+                    name="4 week moving average",
+                    x=self.data.period,
+                    y=self.data.run_count.rolling(4).mean(),
+                    line_color="red",
+                    hoverinfo="skip",
+                ),
+            ],
         )
-        fig.update_layout(yaxis_title="<b>RUNS</b>", xaxis_title="<b>WEEK</b>")
+        fig.update_layout(
+            yaxis_title="<b>RUNS</b>",
+            xaxis_title="<b>WEEK</b>",
+            legend=dict(yanchor="bottom", xanchor="left", x=0.01, y=0.01)
+            # showlegend=False,
+        )
         return fig
 
 
