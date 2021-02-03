@@ -12,7 +12,7 @@ from dash.dependencies import Input, Output
 DB_FILE_PATH = "data/summary.sqlite"
 dataserver_ = dataserver.DataServer(DB_FILE_PATH)
 
-CURRENT_SEASON = "bfa4"
+CURRENT_SEASON = "SL1"
 PATCH_NAMES = {
     "bfa4": "BFA Season 4 / 8.3",
     "bfa4_postpatch": "BFA post-patch / 9.0.1",
