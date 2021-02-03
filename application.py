@@ -5,7 +5,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
-from app import app
+from app import app, application
 from apps import app_activity, app_comps, app_faq, app_specs
 
 DB_FILE_PATH = "data/summary.sqlite"
@@ -64,4 +64,4 @@ def display_page(pathname: str) -> html.Div:
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True, port=8080)
+    application.run(debug=True, port=8080)

@@ -112,7 +112,7 @@ def season_dropdown(id_: str, ishidden: bool) -> dcc.Dropdown:
             },
             {"label": "SL Season 1 (9.0.2)", "value": "SL1"},
         ],
-        value="bfa4",
+        value="SL1",
         clearable=False,
     )
     if ishidden:
