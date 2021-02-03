@@ -120,4 +120,54 @@ class DataServer:
         conn = sqlite3.connect(self.db_file_path)
         activity = pd.read_sql_query("SELECT * FROM activity", conn)
         conn.close()
+        # this is a lazy fix.... add some of the missing data:
+        # I need to fix this later.
+        old_data = {
+            734:552152,
+            735:573429,
+            736:600545,
+            737:533797,
+            738:600092,
+            739:574013,
+            740:632797,
+            741:566984,
+            742:530253,
+            743:602726,
+            744:619092,
+            745:675847,
+            746:664888,
+            747:687195,
+            748:715860,
+            749:621633,
+            750:734762,
+            751:750325,
+            752:718098,
+            753:695534,
+            754:693893,
+            755:629968,
+            756:607517,
+            757:627584,
+            758:601825,
+            759:551282,
+            760:606719,
+            761:565799,
+            762:604201,
+            763:496264,
+            764:552763,
+            765:473691,
+            766:403492,
+            767:371905,
+            768:367528,
+            769:349379,
+            770:285902,
+            771:267267,
+            772:353923
+        }
+        old_data = {
+            "period": list(old_data.keys()),
+            "run_count": list(old_data.values())
+        }
+        old_data = pd.DataFrame(old_data)
+        activity = pd.concat([activity, old_data], axis=0)
+        activity.sort_values(by="period", ascending=True, inplace=True)
         return activity
