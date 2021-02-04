@@ -40,8 +40,8 @@ app.layout = html.Div(
         html.Footer(
             children=[
                 html.P("Created by Uni in 2020"),
-                html.P("Discord"),
-                html.P("Patreon"),
+#                html.P("Discord"),
+#                html.P("Patreon"),
             ]
         ),
     ],

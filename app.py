@@ -1,6 +1,7 @@
 import dash
 
 app = dash.Dash(__name__, suppress_callback_exceptions=True)
+app.title = "Benched: Mythic+ at a glance"
 app.index_string = """<!DOCTYPE html>
     <html>
     <head>
