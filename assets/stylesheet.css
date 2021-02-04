@@ -32,6 +32,8 @@ nav a:hover {
     color: black;
 }
 
+
+
 nav a:active {
     /* This does nothing, but keeping it to see if I can do something later */
     background-color: #C8C8DB;
@@ -55,6 +57,15 @@ footer p{
     padding-bottom: 10px;
     padding-left: 20px;
     padding-right: 20px;
+}
+footer a {
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+}
+
+Footer a:hover {
+    color: red;
 }
 
 

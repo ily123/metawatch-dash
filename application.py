@@ -24,6 +24,7 @@ app.layout = html.Div(
                 html.A("COMPS", href="/comps"),
                 html.A("PLAYER ACTIVITY", href="/activity"),
                 html.A("FAQ", href="/faq"),
+                html.A(id="patron_anchor", children="Patrons", href="/patrons"),
                 # I need this for later:
                 # html.A("OVERVIEW", href="#figure1"),
                 # html.A("SPEC PERFORMANCE", href="#figure2"),
@@ -40,8 +41,14 @@ app.layout = html.Div(
         html.Footer(
             children=[
                 html.P("Created by Uni in 2020"),
-#                html.P("Discord"),
-#                html.P("Patreon"),
+                html.P(
+                html.A("Discord", 
+                       href="https://discord.gg/FShx8cX4AY")),
+                html.P(
+                html.A("Patreon", 
+                       href="https://www.patreon.com/benched")),
+
+
             ]
         ),
     ],
