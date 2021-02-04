@@ -7,9 +7,12 @@ from app import app
 layout = html.Div(
     [
         html.H3("CREDITS"),
-        html.P("This is where Patron names will go. Once we have some patrons. We will totally have patrons."),
-        html.P("If you are interested in becoming the FIRST PATRON, see our Patreon at https://www.patreon.com/benched", id="patreon-alert"),
-        html.P("If you sign up and something doesn't work, don't panic, we will figure it out."),
+        html.P("This website is graciously supported by:"),
+        html.P("Alcaras", style={"font-weight": "bold", "color": "purple"}),
+        html.Br(),
+        html.Br(),
+        html.Hr(),
+        html.P("If you are interested in becoming a patron see https://www.patreon.com/benched"),
         html.Br(),
         html.Br(),
     ]
