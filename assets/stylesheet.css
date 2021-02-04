@@ -207,3 +207,7 @@ label {
 #page-count-label {
     margin-left: 10px;
 }
+
+#patreon-alert {
+    color: blue;
+}

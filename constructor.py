@@ -261,9 +261,8 @@ def faq_errata() -> dcc.Markdown:
 
         **I saw a mistake, have a comment, have an idea**
 
-         My reddit handle is
-         [u/OtherwiseUniversity7](https://www.reddit.com/user/OtherwiseUniversity7).
-         Drop me a note whenever :)
+        Drop me a note in [Discord](https://discord.gg/FShx8cX4AY), or Reddit at
+        [u/OtherwiseUniversity7](https://www.reddit.com/user/OtherwiseUniversity7) :)
 
         &nbsp;
         """

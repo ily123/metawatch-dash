@@ -6,7 +6,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from app import app, application
-from apps import app_activity, app_comps, app_faq, app_specs
+from apps import app_activity, app_comps, app_faq, app_specs, app_patrons
 
 DB_FILE_PATH = "data/summary.sqlite"
 data_last_updated = datetime.datetime.fromtimestamp(
@@ -66,6 +66,8 @@ def display_page(pathname: str) -> html.Div:
         return app_faq.layout
     elif pathname == "/":
         return app_specs.layout
+    elif pathname == "/patrons":
+        return app_patrons.layout
     else:
         return "This URL does not exist: ERROR 404"
 
