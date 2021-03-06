@@ -1,6 +1,7 @@
 __pycache__/
 .ipynb_checkpoints/
 *.swp
+.ssh/
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 scratch.py
