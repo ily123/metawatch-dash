@@ -1,7 +1,7 @@
 __pycache__/
 .ipynb_checkpoints/
 *.swp
-.ssh/
+config/db_config.ini
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 scratch.py
