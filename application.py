@@ -6,7 +6,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from app import app, application
-from apps import app_activity, app_comps, app_faq, app_specs, app_patrons
+from apps import app_activity, app_comps, app_faq, app_specs, app_patrons, app_character
 
 DB_FILE_PATH = "data/summary.sqlite"
 data_last_updated = datetime.datetime.fromtimestamp(
@@ -41,14 +41,8 @@ app.layout = html.Div(
         html.Footer(
             children=[
                 html.P("Created by Uni in 2020"),
-                html.P(
-                html.A("Discord", 
-                       href="https://discord.gg/FShx8cX4AY")),
-                html.P(
-                html.A("Patreon", 
-                       href="https://www.patreon.com/benched")),
-
-
+                html.P(html.A("Discord", href="https://discord.gg/FShx8cX4AY")),
+                html.P(html.A("Patreon", href="https://www.patreon.com/benched")),
             ]
         ),
     ],
@@ -68,6 +62,8 @@ def display_page(pathname: str) -> html.Div:
         return app_specs.layout
     elif pathname == "/patrons":
         return app_patrons.layout
+    elif pathname == "/abc123x":
+        return app_character.layout
     else:
         return "This URL does not exist: ERROR 404"
 
